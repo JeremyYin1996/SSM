@@ -1,0 +1,27 @@
+import java.util.Scanner;
+
+/**
+ * @author Jeremy
+ * @date 2018-12-26
+ * @time ÏÂÎç2:02:18
+ */
+
+public class Test4 {
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("ÇëÊäÈëÔÂ·Ý£º");
+		int mouth = scanner.nextInt();
+		if((mouth>=3)&&(mouth<=5)){
+			System.out.println("´º¼¾");
+		}else if(mouth>=6&&mouth<=7){
+			System.out.println("ÏÄ¼¾");
+		}else if(mouth>=8&&mouth<=11){
+			System.out.println("Çï¼¾");
+		}else if( (mouth>=11&&mouth<=12)||(mouth==1) ){
+			System.out.println("¶¬¼¾");
+		}
+		
+	}
+}
+
+

@@ -1,0 +1,21 @@
+/**
+ * @author Jeremy
+ * @date 2019-1-2
+ * @time обнГ1:36:52
+ */
+
+package com.yunsi;
+
+public class Person {
+	String name1;
+	int age1;
+	String name2;
+	int age2;
+
+	public void compare() {
+		if (name1.endsWith(name2)) {
+			System.out.println(name1+ age1);
+			System.out.println(name2+ age2);
+		}
+	}
+}

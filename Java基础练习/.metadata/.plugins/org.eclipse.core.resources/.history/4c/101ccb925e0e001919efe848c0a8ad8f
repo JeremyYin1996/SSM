@@ -1,0 +1,17 @@
+/**
+ * @author Jeremy
+ * @date 2019-1-2
+ * @time 下午1:36:52
+ */
+
+package com.yunsi;
+
+public class Person extends Monkey {
+	public Person() {
+		super();
+		
+	}
+	public void speak(){
+		System.out.println("小样,会说话了");;//调用父类中的无参
+	}
+}
