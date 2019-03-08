@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sqc.dao.PurchaseMapper">
+  <resultMap id="BaseResultMap" type="com.sqc.bean.Purchase">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="drug_id" jdbcType="CHAR" property="drugId" />
+    <result column="pharm_id" jdbcType="CHAR" property="pharmId" />
+    <result column="purchase_price" jdbcType="REAL" property="purchasePrice" />
+    <result column="purchase_num" jdbcType="INTEGER" property="purchaseNum" />
+    <result column="purchase_date" jdbcType="DATE" property="purchaseDate" />
+    <result column="add_time" jdbcType="DATE" property="addTime" />
+    <result column="add_user" jdbcType="CHAR" property="addUser" />
+    <result column="if_deleted" jdbcType="BIT" property="ifDeleted" />
+    <result column="delete_user" jdbcType="CHAR" property="deleteUser" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, drug_id, pharm_id, purchase_price, purchase_num, purchase_date, add_time, add_user, 
+    if_deleted, delete_user
+  </sql>
+  <select id="selectByExample" parameterType="com.sqc.bean.PurchaseExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_purchase
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_purchase
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_purchase
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.sqc.bean.PurchaseExample">
+    delete from t_purchase
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.sqc.bean.Purchase">
+    insert into t_purchase (id, drug_id, pharm_id, 
+      purchase_price, purchase_num, purchase_date, 
+      add_time, add_user, if_deleted, 
+      delete_user)
+    values (#{id,jdbcType=INTEGER}, #{drugId,jdbcType=CHAR}, #{pharmId,jdbcType=CHAR}, 
+      #{purchasePrice,jdbcType=REAL}, #{purchaseNum,jdbcType=INTEGER}, #{purchaseDate,jdbcType=DATE}, 
+      #{addTime,jdbcType=DATE}, #{addUser,jdbcType=CHAR}, #{ifDeleted,jdbcType=BIT}, 
+      #{deleteUser,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sqc.bean.Purchase">
+    insert into t_purchase
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="drugId != null">
+        drug_id,
+      </if>
+      <if test="pharmId != null">
+        pharm_id,
+      </if>
+      <if test="purchasePrice != null">
+        purchase_price,
+      </if>
+      <if test="purchaseNum != null">
+        purchase_num,
+      </if>
+      <if test="purchaseDate != null">
+        purchase_date,
+      </if>
+      <if test="addTime != null">
+        add_time,
+      </if>
+      <if test="addUser != null">
+        add_user,
+      </if>
+      <if test="ifDeleted != null">
+        if_deleted,
+      </if>
+      <if test="deleteUser != null">
+        delete_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="drugId != null">
+        #{drugId,jdbcType=CHAR},
+      </if>
+      <if test="pharmId != null">
+        #{pharmId,jdbcType=CHAR},
+      </if>
+      <if test="purchasePrice != null">
+        #{purchasePrice,jdbcType=REAL},
+      </if>
+      <if test="purchaseNum != null">
+        #{purchaseNum,jdbcType=INTEGER},
+      </if>
+      <if test="purchaseDate != null">
+        #{purchaseDate,jdbcType=DATE},
+      </if>
+      <if test="addTime != null">
+        #{addTime,jdbcType=DATE},
+      </if>
+      <if test="addUser != null">
+        #{addUser,jdbcType=CHAR},
+      </if>
+      <if test="ifDeleted != null">
+        #{ifDeleted,jdbcType=BIT},
+      </if>
+      <if test="deleteUser != null">
+        #{deleteUser,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.sqc.bean.PurchaseExample" resultType="java.lang.Long">
+    select count(*) from t_purchase
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update t_purchase
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.drugId != null">
+        drug_id = #{record.drugId,jdbcType=CHAR},
+      </if>
+      <if test="record.pharmId != null">
+        pharm_id = #{record.pharmId,jdbcType=CHAR},
+      </if>
+      <if test="record.purchasePrice != null">
+        purchase_price = #{record.purchasePrice,jdbcType=REAL},
+      </if>
+      <if test="record.purchaseNum != null">
+        purchase_num = #{record.purchaseNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.purchaseDate != null">
+        purchase_date = #{record.purchaseDate,jdbcType=DATE},
+      </if>
+      <if test="record.addTime != null">
+        add_time = #{record.addTime,jdbcType=DATE},
+      </if>
+      <if test="record.addUser != null">
+        add_user = #{record.addUser,jdbcType=CHAR},
+      </if>
+      <if test="record.ifDeleted != null">
+        if_deleted = #{record.ifDeleted,jdbcType=BIT},
+      </if>
+      <if test="record.deleteUser != null">
+        delete_user = #{record.deleteUser,jdbcType=CHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update t_purchase
+    set id = #{record.id,jdbcType=INTEGER},
+      drug_id = #{record.drugId,jdbcType=CHAR},
+      pharm_id = #{record.pharmId,jdbcType=CHAR},
+      purchase_price = #{record.purchasePrice,jdbcType=REAL},
+      purchase_num = #{record.purchaseNum,jdbcType=INTEGER},
+      purchase_date = #{record.purchaseDate,jdbcType=DATE},
+      add_time = #{record.addTime,jdbcType=DATE},
+      add_user = #{record.addUser,jdbcType=CHAR},
+      if_deleted = #{record.ifDeleted,jdbcType=BIT},
+      delete_user = #{record.deleteUser,jdbcType=CHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sqc.bean.Purchase">
+    update t_purchase
+    <set>
+      <if test="drugId != null">
+        drug_id = #{drugId,jdbcType=CHAR},
+      </if>
+      <if test="pharmId != null">
+        pharm_id = #{pharmId,jdbcType=CHAR},
+      </if>
+      <if test="purchasePrice != null">
+        purchase_price = #{purchasePrice,jdbcType=REAL},
+      </if>
+      <if test="purchaseNum != null">
+        purchase_num = #{purchaseNum,jdbcType=INTEGER},
+      </if>
+      <if test="purchaseDate != null">
+        purchase_date = #{purchaseDate,jdbcType=DATE},
+      </if>
+      <if test="addTime != null">
+        add_time = #{addTime,jdbcType=DATE},
+      </if>
+      <if test="addUser != null">
+        add_user = #{addUser,jdbcType=CHAR},
+      </if>
+      <if test="ifDeleted != null">
+        if_deleted = #{ifDeleted,jdbcType=BIT},
+      </if>
+      <if test="deleteUser != null">
+        delete_user = #{deleteUser,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sqc.bean.Purchase">
+    update t_purchase
+    set drug_id = #{drugId,jdbcType=CHAR},
+      pharm_id = #{pharmId,jdbcType=CHAR},
+      purchase_price = #{purchasePrice,jdbcType=REAL},
+      purchase_num = #{purchaseNum,jdbcType=INTEGER},
+      purchase_date = #{purchaseDate,jdbcType=DATE},
+      add_time = #{addTime,jdbcType=DATE},
+      add_user = #{addUser,jdbcType=CHAR},
+      if_deleted = #{ifDeleted,jdbcType=BIT},
+      delete_user = #{deleteUser,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sqc.dao.Categ4IndexMapper">
+  <resultMap id="BaseResultMap" type="com.sqc.bean.Categ4Index">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="categ_id" jdbcType="CHAR" property="categId" />
+    <result column="categ_index" jdbcType="REAL" property="categIndex" />
+    <result column="categ_avg_price" jdbcType="REAL" property="categAvgPrice" />
+    <result column="days" jdbcType="REAL" property="days" />
+    <result column="sales" jdbcType="REAL" property="sales" />
+    <result column="statis_date" jdbcType="DATE" property="statisDate" />
+  </resultMap>
+  
+  <resultMap id="WithCategResultMap" type="com.sqc.bean.Categ4Index">
+     <id column="id" jdbcType="INTEGER" property="id" />
+     <result column="categ_id" jdbcType="CHAR" property="categId" />
+     <result column="categ_index" jdbcType="REAL" property="categIndex" />
+     <result column="categ_avg_price" jdbcType="REAL" property="categAvgPrice" />
+     <result column="days" jdbcType="REAL" property="days" />
+     <result column="sales" jdbcType="REAL" property="sales" />
+     <result column="statis_date" jdbcType="DATE" property="statisDate" />
+     <association property="category" javaType="com.sqc.bean.Category">
+    	<id column="cid" property="categId"/>
+    	<result column="categ_name" jdbcType="VARCHAR" property="categName" />
+    	<result column="level" jdbcType="CHAR" property="level" />    
+    </association>
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, categ_id, 
+    FORMAT(categ_index, 3) as categ_index, FORMAT(categ_avg_price, 3) as categ_avg_price, 
+    days, sales, statis_date
+  </sql>
+  
+  <sql id="With_Categ_Column_List">
+    a.`categ_id` cid,a.`categ_name`,a.`level`,b.`categ_id`,
+    FORMAT(b.`categ_avg_price`, 3) as categ_avg_price, 
+    FORMAT(b.`categ_index`, 3)  as categ_index,
+    b.`days`,b.`sales`,b.`statis_date`
+  </sql>
+  <!-- List<Categ4Index> selectByStatisDateWithCategName(Map<String, Object> map); -->
+  
+   <select id="selectByStatisDateWithCategName" parameterType="map" resultMap="WithCategResultMap">
+     select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="With_Categ_Column_List" />
+     FROM t_category a JOIN t_categ4index b ON a.`categ_id`=b.`categ_id`
+     WHERE YEAR(b.`statis_date`)=#{statisYear} AND MONTH(b.`statis_date`)=#{statisMonth}
+     <if test="categName!=null"> and	
+			a.categ_name LIKE CONCAT('%',#{categName},'%')
+	</if>
+     <if test="indexSort!=null" >
+			order by 
+	 </if>
+	 <if test="indexSort=='desc'">
+			b.categ_index DESC
+	 </if>
+	 <if test="indexSort=='asc'">
+			b.categ_index ASC
+	 </if>
+  </select>
+  <!--List<Map<String, Object>> selectRecentCateg4IndicesById(Map<String, String> map); -->
+   <select id="selectRecentCateg4IndicesById" parameterType="map" resultType="map">
+		select DATE_FORMAT(t.maxtime,"%Y-%m") maxtime,FORMAT(baselyindex, 3) as baselyindex,
+			FORMAT(monthlyindex, 3) as monthlyindex ,
+			FORMAT(yearlyindex, 3) as yearlyindex 
+		from(
+			select max(statis_date) as maxtime,baselyindex,monthlyindex,yearlyindex
+		    from v_categ4index 
+		    where categ_id=#{categId}
+		    group by statis_date ) t
+		where t.maxtime BETWEEN SUBDATE(CURDATE(),INTERVAL 12 month) AND CURDATE();
+	</select>
+	
+	<!-- List<Categ4Index> selectByIdAndStatisDate(Map<String, Object> map); -->
+  <select id="selectByIdAndStatisDate" parameterType="map" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_categ4index
+     where categ_id = #{categId}
+     and YEAR(statis_date)=#{year} AND MONTH(statis_date)=#{month}
+  </select>
+  
+   <!--以前的： List<Map<String, Object>> selectRecentCateg4IndicesById(Map<String, String> map); 
+   <select id="selectRecentCateg4IndicesById" parameterType="map" resultType="map">
+		select DATE_FORMAT(t.maxtime,"%Y-%m") maxtime,categ_index 
+		from(
+			select max(statis_date) as maxtime,categ_index
+		    from t_categ4index 
+		    where categ_id=#{categId}
+		    group by DATE_FORMAT(statis_date,"%Y-%m")) t
+		where t.maxtime BETWEEN SUBDATE(CURDATE(),INTERVAL 12 month) AND CURDATE();
+	</select>
+	-->
+  <select id="selectByExample" parameterType="com.sqc.bean.Categ4IndexExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_categ4index
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_categ4index
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_categ4index
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.sqc.bean.Categ4IndexExample">
+    delete from t_categ4index
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.sqc.bean.Categ4Index">
+    insert into t_categ4index (id, categ_id, categ_index, 
+      categ_avg_price, days, sales, 
+      statis_date)
+    values (#{id,jdbcType=INTEGER}, #{categId,jdbcType=CHAR}, #{categIndex,jdbcType=REAL}, 
+      #{categAvgPrice,jdbcType=REAL}, #{days,jdbcType=REAL}, #{sales,jdbcType=REAL}, 
+      #{statisDate,jdbcType=DATE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sqc.bean.Categ4Index">
+    insert into t_categ4index
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="categId != null">
+        categ_id,
+      </if>
+      <if test="categIndex != null">
+        categ_index,
+      </if>
+      <if test="categAvgPrice != null">
+        categ_avg_price,
+      </if>
+      <if test="days != null">
+        days,
+      </if>
+      <if test="sales != null">
+        sales,
+      </if>
+      <if test="statisDate != null">
+        statis_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="categId != null">
+        #{categId,jdbcType=CHAR},
+      </if>
+      <if test="categIndex != null">
+        #{categIndex,jdbcType=REAL},
+      </if>
+      <if test="categAvgPrice != null">
+        #{categAvgPrice,jdbcType=REAL},
+      </if>
+      <if test="days != null">
+        #{days,jdbcType=REAL},
+      </if>
+      <if test="sales != null">
+        #{sales,jdbcType=REAL},
+      </if>
+      <if test="statisDate != null">
+        #{statisDate,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.sqc.bean.Categ4IndexExample" resultType="java.lang.Long">
+    select count(*) from t_categ4index
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update t_categ4index
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.categId != null">
+        categ_id = #{record.categId,jdbcType=CHAR},
+      </if>
+      <if test="record.categIndex != null">
+        categ_index = #{record.categIndex,jdbcType=REAL},
+      </if>
+      <if test="record.categAvgPrice != null">
+        categ_avg_price = #{record.categAvgPrice,jdbcType=REAL},
+      </if>
+      <if test="record.days != null">
+        days = #{record.days,jdbcType=REAL},
+      </if>
+      <if test="record.sales != null">
+        sales = #{record.sales,jdbcType=REAL},
+      </if>
+      <if test="record.statisDate != null">
+        statis_date = #{record.statisDate,jdbcType=DATE},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update t_categ4index
+    set id = #{record.id,jdbcType=INTEGER},
+      categ_id = #{record.categId,jdbcType=CHAR},
+      categ_index = #{record.categIndex,jdbcType=REAL},
+      categ_avg_price = #{record.categAvgPrice,jdbcType=REAL},
+      days = #{record.days,jdbcType=REAL},
+      sales = #{record.sales,jdbcType=REAL},
+      statis_date = #{record.statisDate,jdbcType=DATE}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sqc.bean.Categ4Index">
+    update t_categ4index
+    <set>
+      <if test="categId != null">
+        categ_id = #{categId,jdbcType=CHAR},
+      </if>
+      <if test="categIndex != null">
+        categ_index = #{categIndex,jdbcType=REAL},
+      </if>
+      <if test="categAvgPrice != null">
+        categ_avg_price = #{categAvgPrice,jdbcType=REAL},
+      </if>
+      <if test="days != null">
+        days = #{days,jdbcType=REAL},
+      </if>
+      <if test="sales != null">
+        sales = #{sales,jdbcType=REAL},
+      </if>
+      <if test="statisDate != null">
+        statis_date = #{statisDate,jdbcType=DATE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sqc.bean.Categ4Index">
+    update t_categ4index
+    set categ_id = #{categId,jdbcType=CHAR},
+      categ_index = #{categIndex,jdbcType=REAL},
+      categ_avg_price = #{categAvgPrice,jdbcType=REAL},
+      days = #{days,jdbcType=REAL},
+      sales = #{sales,jdbcType=REAL},
+      statis_date = #{statisDate,jdbcType=DATE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

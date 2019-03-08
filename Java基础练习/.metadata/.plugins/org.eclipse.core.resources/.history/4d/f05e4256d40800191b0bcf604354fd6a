@@ -1,0 +1,23 @@
+import java.util.Scanner;
+
+/**
+ * @author Jeremy
+ * @date 2018-12-26
+ * @time 下午2:02:18
+ */
+
+public class Test4 {
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("请输入你的会员号（5位）：");
+		int point = scanner.nextInt();
+		int b = point%10;  			//个位
+		int c = (point/10)%10;		//十位
+		int d = (point/100)%10;		//百位
+		int e = (point/1000)%10;	//千位
+		int f = point/10000;
+		String g = ((b+c+d+e+f)>20)&&(d==6)?"奖励一瓶脉动":"谢谢惠顾";
+	}
+}
+
+

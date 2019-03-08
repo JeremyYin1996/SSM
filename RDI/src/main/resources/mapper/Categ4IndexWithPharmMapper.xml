@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sqc.dao.Categ4IndexWithPharmMapper">
+  <resultMap id="BaseResultMap" type="com.sqc.bean.Categ4IndexWithPharm">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="pharm_id" jdbcType="CHAR" property="pharmId" />
+    <result column="categ_id" jdbcType="CHAR" property="categId" />
+    <result column="categ_index" jdbcType="REAL" property="categIndex" />
+    <result column="categ_avg_price" jdbcType="REAL" property="categAvgPrice" />
+    <result column="days" jdbcType="REAL" property="days" />
+    <result column="sales" jdbcType="REAL" property="sales" />
+    <result column="statis_date" jdbcType="DATE" property="statisDate" />
+  </resultMap>
+  
+  <resultMap id="WithPharmAndDistrictResultMap" type="com.sqc.bean.Categ4IndexWithPharm">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="pharm_id" jdbcType="CHAR" property="pharmId" />
+    <result column="categ_id" jdbcType="CHAR" property="categId" />
+    <result column="categ_index" jdbcType="REAL" property="categIndex" />
+    <result column="categ_avg_price" jdbcType="REAL" property="categAvgPrice" />
+    <result column="days" jdbcType="REAL" property="days" />
+    <result column="sales" jdbcType="REAL" property="sales" />
+    <result column="statis_date" jdbcType="DATE" property="statisDate" />
+    <association property="category" javaType="com.sqc.bean.Category">
+    	<id column="cid" property="categId"/>
+    	<result column="categ_name" jdbcType="VARCHAR" property="categName" />
+    	<result column="level" jdbcType="CHAR" property="level" />    
+    </association>
+    <association property="pharmacy" javaType="com.sqc.bean.Pharmacy">
+    	<id column="phid" property="pharmId"/>
+    	<result column="pharm_name" jdbcType="VARCHAR" property="pharmName" />
+    	<result  column="district_id" jdbcType="CHAR" property="districtId" />
+    	<association property="district" javaType="com.sqc.bean.District">
+    		  <id column="did" property="districtId"/>
+    		  <result column="province" jdbcType="VARCHAR" property="province" />
+    		  <result column="city" jdbcType="VARCHAR" property="city" />
+    		  <result column="county" jdbcType="VARCHAR" property="county" />
+    	</association>
+    </association>
+  </resultMap>
+  
+   <resultMap id="WithDisAndPharmResultMap" type="com.sqc.bean.Categ4IndexWithPharm">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="pharm_id" jdbcType="CHAR" property="pharmId" />
+    <result column="categ_id" jdbcType="CHAR" property="categId" />
+    <result column="categ_index" jdbcType="REAL" property="categIndex" />
+    <result column="categ_avg_price" jdbcType="REAL" property="categAvgPrice" />
+    <result column="days" jdbcType="REAL" property="days" />
+    <result column="sales" jdbcType="REAL" property="sales" />
+    <result column="statis_date" jdbcType="DATE" property="statisDate" />
+    <association property="pharmacy" javaType="com.sqc.bean.Pharmacy">
+    	<id column="phid" property="pharmId"/>
+    	<result column="pharm_name" jdbcType="VARCHAR" property="pharmName" />
+    	<result  column="district_id" jdbcType="CHAR" property="districtId" />
+    	<association property="district" javaType="com.sqc.bean.District">
+    		  <id column="did" property="districtId"/>
+    		  <result column="province" jdbcType="VARCHAR" property="province" />
+    		  <result column="city" jdbcType="VARCHAR" property="city" />
+    		  <result column="county" jdbcType="VARCHAR" property="county" />
+    	</association>
+    </association>
+  </resultMap>
+  
+  
+    <resultMap id="WithCityIndexResultMap" type="com.sqc.bean.Categ4IndexWithPharm">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="pharm_id" jdbcType="CHAR" property="pharmId" />
+    <result column="categ_id" jdbcType="CHAR" property="categId" />
+    <result column="categ_index" jdbcType="REAL" property="categIndex" />
+    <result column="categ_avg_price" jdbcType="REAL" property="categAvgPrice" />
+    <result column="days" jdbcType="REAL" property="days" />
+    <result column="sales" jdbcType="REAL" property="sales" />
+    <result column="statis_date" jdbcType="DATE" property="statisDate" />
+     <association property="category" javaType="com.sqc.bean.Category">
+    	<id column="c_id" property="categId"/>
+    	<result column="categ_name" jdbcType="VARCHAR" property="categName" />
+    	<result column="level" jdbcType="CHAR" property="level" />    
+    </association>
+    <association property="categ4Index" javaType="com.sqc.bean.Categ4Index">
+        <id column="cityindex_id" jdbcType="INTEGER" property="id" />
+        <result column="city_categ_index" jdbcType="REAL" property="categIndex" />
+        <result column="city_categ_avg_price" jdbcType="REAL" property="categAvgPrice" />
+    </association>
+     <association property="pharmacy" javaType="com.sqc.bean.Pharmacy">
+    	<id column="phid" property="pharmId"/>
+    	<result column="pharm_name" jdbcType="VARCHAR" property="pharmName" />
+    	</association>
+  </resultMap>
+  
+  
+  
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, pharm_id, categ_id, 
+    FORMAT(categ_index, 3) as categ_index, 
+    FORMAT(categ_avg_price, 3) as categ_avg_price,
+    days, sales, statis_date
+  </sql>
+     <sql id="With_Pharm_And_District_Column_List">
+     a.`categ_id` as cid, a.`categ_name`,a.`level`,
+     b.`categ_id`, b.`pharm_id`,
+     FORMAT(b.`categ_avg_price`, 3) as categ_avg_price,
+     FORMAT(b.`categ_index`, 3)  as categ_index,
+     b.`days`,b.`sales`,b.`statis_date`,
+     c.`pharm_id` phid, c.`pharm_name`,
+     d.`district_id` did, d.`province`,d.`city`, d.`county`
+  </sql>
+  
+    <sql id="With_DisAndPharm_Column_List">
+     b.`categ_id`, b.`pharm_id`,
+     FORMAT(b.`categ_avg_price`, 3) as categ_avg_price,
+     FORMAT(b.`categ_index`, 3)  as categ_index,
+     b.`days`,b.`sales`,b.`statis_date`,
+     c.`pharm_id` phid, c.`pharm_name`,
+     d.`district_id` did, d.`province`,d.`city`, d.`county`
+  </sql>
+  
+        <sql id="selectCompareIndexByIdAndStatisDate_List">
+     b.`categ_id`,c.`categ_name`, b.`pharm_id`,d.`pharm_name`,
+     FORMAT(a.`categ_index`, 3) as city_categ_index,
+     FORMAT(b.`categ_index`, 3)  as categ_index,
+     b.`statis_date`
+  </sql>
+  
+
+    <select id="selectCompareIndexByIdAndStatisDate" parameterType="map" resultMap="WithCityIndexResultMap">     
+SELECT
+<if test="distinct">
+      distinct
+    </if>
+    <include refid="selectCompareIndexByIdAndStatisDate_List" />
+<!-- b.`categ_id`,c.`categ_name`,b.`pharm_id`,a.`categ_index` city_categ_index,b.`categ_index`,b.`statis_date` --> 
+FROM `t_category` c JOIN t_categ4index a ON c.`categ_id`=a.`categ_id` 
+JOIN `t_categ4index_with_pharm` b  ON a.`categ_id`=b.`categ_id` AND a.`statis_date`=b.`statis_date`
+JOIN `t_pharmacy` d ON b.`pharm_id`=d.`pharm_id`
+WHERE  year(b.`statis_date`)=#{year} AND month(b.`statis_date`)=#{month}
+AND b.`categ_index`NOT BETWEEN 0.5*a.`categ_index`AND 1.5*a.`categ_index`
+ <if test="categName!=null"> and	
+			c.categ_name LIKE CONCAT('%',#{categName},'%')
+	</if>
+	
+  </select>
+  
+  
+  
+  <select id="selectCompareIndexWithKinds" parameterType="map" resultMap="WithCityIndexResultMap">   
+ SELECT
+  <if test="distinct">
+      distinct
+  </if>
+  <include refid="selectCompareIndexByIdAndStatisDate_List" />
+   FROM `t_category` c JOIN t_categ4index a ON c.`categ_id`=a.`categ_id` 
+   JOIN `t_categ4index_with_pharm` b  ON a.`categ_id`=b.`categ_id` AND a.`statis_date`=b.`statis_date`
+   JOIN `t_pharmacy` d ON b.`pharm_id`=d.`pharm_id`
+   WHERE   year(b.`statis_date`)=#{year}   
+   AND month(b.`statis_date`)=#{month}
+   AND b.`categ_id`=#{classifybykindsId}
+   and b.`categ_index`NOT BETWEEN (1+#{decrease})*a.`categ_index`AND (1+#{rise})*a.`categ_index`
+     <if test="categName!=null"> and	
+			c.categ_name LIKE CONCAT('%',#{categName},'%')
+	</if>
+  </select>
+  
+  
+  
+  
+ <!-- List<Categ4IndexWithPharm> selectCompareIndex(Map<String, Object> map); -->
+ <select id="selectCompareIndex" parameterType="map" resultMap="WithCityIndexResultMap">   
+ SELECT
+  <if test="distinct">
+      distinct
+  </if>
+  <include refid="selectCompareIndexByIdAndStatisDate_List" />
+   FROM `t_category` c JOIN t_categ4index a ON c.`categ_id`=a.`categ_id` 
+   JOIN `t_categ4index_with_pharm` b  ON a.`categ_id`=b.`categ_id` AND a.`statis_date`=b.`statis_date`
+   JOIN `t_pharmacy` d ON b.`pharm_id`=d.`pharm_id`
+   WHERE   year(b.`statis_date`)=#{year}   
+   AND month(b.`statis_date`)=#{month}
+   and b.`categ_index`NOT BETWEEN (1+#{decrease})*a.`categ_index`AND (1+#{rise})*a.`categ_index`
+    <if test="classifybykindsId!=null and classifybykindsId!=''">
+       AND b.`categ_id`=#{classifybykindsId}
+    </if>
+     <if test="categName!=null"> and	
+			c.categ_name LIKE CONCAT('%',#{categName},'%')
+	</if>
+  </select>
+  
+   <!-- List<Categ4IndexWithPharm> selectCompareIndexWithPharam(Map<String, Object> map); -->
+ <select id="selectCompareIndexWithPharam" parameterType="map" resultMap="WithCityIndexResultMap">   
+ SELECT
+  <if test="distinct">
+      distinct
+  </if>
+  <include refid="selectCompareIndexByIdAndStatisDate_List" />
+   FROM `t_category` c JOIN t_categ4index a ON c.`categ_id`=a.`categ_id` 
+   JOIN `t_categ4index_with_pharm` b  ON a.`categ_id`=b.`categ_id` AND a.`statis_date`=b.`statis_date`
+   JOIN `t_pharmacy` d ON b.`pharm_id`=d.`pharm_id`
+   WHERE   year(b.`statis_date`)=#{year}   
+   AND month(b.`statis_date`)=#{month}
+  AND b.`pharm_id`=#{drugstoreId}
+   and b.`categ_index`NOT BETWEEN (1+#{decrease})*a.`categ_index`AND (1+#{rise})*a.`categ_index`
+      <if test="classifybykindsId!=null and classifybykindsId!=''">
+       AND b.`categ_id`=#{classifybykindsId}
+    </if>
+     <if test="categName!=null"> and	
+			c.categ_name LIKE CONCAT('%',#{categName},'%')
+	</if>
+  </select>
+  
+  <!-- List<Categ4IndexWithPharm> selectByStatisDateWithCategNameAndDrugStore(Map<String, Object> map); -->
+   <select id="selectByStatisDateWithCategNameAndDrugStore" parameterType="map" resultMap="WithPharmAndDistrictResultMap">
+     select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="With_Pharm_And_District_Column_List" />
+     FROM t_category a JOIN t_categ4index_with_pharm b ON a.`categ_id`=b.`categ_id`
+     JOIN t_pharmacy c ON b.`pharm_id`=c.`pharm_id`
+     JOIN t_district d ON c.`district_id`=d.`district_id`
+     WHERE b.`pharm_id`=#{drugstoreId}
+     AND YEAR(b.`statis_date`)=#{statisYear} AND MONTH(b.`statis_date`)=#{statisMonth}
+     <if test="categName!=null"> and	
+			a.categ_name LIKE CONCAT('%',#{categName},'%')
+	</if>
+     <if test="indexSort!=null" >
+			order by 
+	 </if>
+	 <if test="indexSort=='desc'">
+			b.categ_index DESC
+	 </if>
+	 <if test="indexSort=='asc'">
+			b.categ_index ASC
+	 </if>
+  </select>
+  
+   <!-- List<Map<String, Object>> selectRecentCateg4IndicesById(Map<String, String> map);  -->
+   <select id="selectRecentCateg4IndicesById" parameterType="map" resultType="map">
+		select DATE_FORMAT(t.maxtime,"%Y-%m") maxtime,FORMAT(baselyindex, 3) as baselyindex,
+			FORMAT(monthlyindex, 3) as monthlyindex ,
+			FORMAT(yearlyindex, 3) as yearlyindex 
+		from(
+			select max(statis_date) as maxtime,baselyindex,monthlyindex,yearlyindex
+		    from v_categ4index_with_pharm 
+		    where categ_id=#{categId}
+		    and pharm_id=#{pharmId}
+		    group by statis_date) t
+		where t.maxtime BETWEEN SUBDATE(CURDATE(),INTERVAL 12 month) AND CURDATE();
+	</select>
+
+	<!--根据药品Id和统计日期选择，主要为了进行横向对比
+	List<Categ4IndexWithPharm> selectByIdAndStatisDate(Map<String, Object> map); 
+	 -->
+   <select id="selectByIdAndStatisDate" parameterType="map" resultMap="WithDisAndPharmResultMap">
+    select 
+    <include refid="With_DisAndPharm_Column_List" />
+    from t_categ4index_with_pharm b JOIN t_pharmacy c ON b.`pharm_id`=c.`pharm_id`
+     JOIN t_district d ON c.`district_id`=d.`district_id`
+    where categ_id = #{categId}
+    and YEAR(statis_date)=#{year} AND MONTH(statis_date)=#{month}
+  </select>
+  
+  <!--以前的算法： List<Map<String, Object>> selectRecentCateg4IndicesById(Map<String, String> map); 
+   <select id="selectRecentCateg4IndicesById" parameterType="map" resultType="map">
+		select DATE_FORMAT(t.maxtime,"%Y-%m") maxtime,categ_index 
+		from(
+			select max(statis_date) as maxtime,categ_index
+		    from t_categ4index_with_pharm 
+		    where categ_id=#{categId}
+		    and pharm_id=#{pharmId}
+		    group by DATE_FORMAT(statis_date,"%Y-%m")) t
+		where t.maxtime BETWEEN SUBDATE(CURDATE(),INTERVAL 12 month) AND CURDATE();
+	</select>
+ -->
+ 
+ 
+  <select id="selectByExample" parameterType="com.sqc.bean.Categ4IndexWithPharmExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_categ4index_with_pharm
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_categ4index_with_pharm
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from t_categ4index_with_pharm
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.sqc.bean.Categ4IndexWithPharmExample">
+    delete from t_categ4index_with_pharm
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.sqc.bean.Categ4IndexWithPharm">
+    insert into t_categ4index_with_pharm (id, pharm_id, categ_id, 
+      categ_index, categ_avg_price, days, 
+      sales, statis_date)
+    values (#{id,jdbcType=BIGINT}, #{pharmId,jdbcType=CHAR}, #{categId,jdbcType=CHAR}, 
+      #{categIndex,jdbcType=REAL}, #{categAvgPrice,jdbcType=REAL}, #{days,jdbcType=REAL}, 
+      #{sales,jdbcType=REAL}, #{statisDate,jdbcType=DATE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sqc.bean.Categ4IndexWithPharm">
+    insert into t_categ4index_with_pharm
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="pharmId != null">
+        pharm_id,
+      </if>
+      <if test="categId != null">
+        categ_id,
+      </if>
+      <if test="categIndex != null">
+        categ_index,
+      </if>
+      <if test="categAvgPrice != null">
+        categ_avg_price,
+      </if>
+      <if test="days != null">
+        days,
+      </if>
+      <if test="sales != null">
+        sales,
+      </if>
+      <if test="statisDate != null">
+        statis_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="pharmId != null">
+        #{pharmId,jdbcType=CHAR},
+      </if>
+      <if test="categId != null">
+        #{categId,jdbcType=CHAR},
+      </if>
+      <if test="categIndex != null">
+        #{categIndex,jdbcType=REAL},
+      </if>
+      <if test="categAvgPrice != null">
+        #{categAvgPrice,jdbcType=REAL},
+      </if>
+      <if test="days != null">
+        #{days,jdbcType=REAL},
+      </if>
+      <if test="sales != null">
+        #{sales,jdbcType=REAL},
+      </if>
+      <if test="statisDate != null">
+        #{statisDate,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.sqc.bean.Categ4IndexWithPharmExample" resultType="java.lang.Long">
+    select count(*) from t_categ4index_with_pharm
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update t_categ4index_with_pharm
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.pharmId != null">
+        pharm_id = #{record.pharmId,jdbcType=CHAR},
+      </if>
+      <if test="record.categId != null">
+        categ_id = #{record.categId,jdbcType=CHAR},
+      </if>
+      <if test="record.categIndex != null">
+        categ_index = #{record.categIndex,jdbcType=REAL},
+      </if>
+      <if test="record.categAvgPrice != null">
+        categ_avg_price = #{record.categAvgPrice,jdbcType=REAL},
+      </if>
+      <if test="record.days != null">
+        days = #{record.days,jdbcType=REAL},
+      </if>
+      <if test="record.sales != null">
+        sales = #{record.sales,jdbcType=REAL},
+      </if>
+      <if test="record.statisDate != null">
+        statis_date = #{record.statisDate,jdbcType=DATE},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update t_categ4index_with_pharm
+    set id = #{record.id,jdbcType=BIGINT},
+      pharm_id = #{record.pharmId,jdbcType=CHAR},
+      categ_id = #{record.categId,jdbcType=CHAR},
+      categ_index = #{record.categIndex,jdbcType=REAL},
+      categ_avg_price = #{record.categAvgPrice,jdbcType=REAL},
+      days = #{record.days,jdbcType=REAL},
+      sales = #{record.sales,jdbcType=REAL},
+      statis_date = #{record.statisDate,jdbcType=DATE}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sqc.bean.Categ4IndexWithPharm">
+    update t_categ4index_with_pharm
+    <set>
+      <if test="pharmId != null">
+        pharm_id = #{pharmId,jdbcType=CHAR},
+      </if>
+      <if test="categId != null">
+        categ_id = #{categId,jdbcType=CHAR},
+      </if>
+      <if test="categIndex != null">
+        categ_index = #{categIndex,jdbcType=REAL},
+      </if>
+      <if test="categAvgPrice != null">
+        categ_avg_price = #{categAvgPrice,jdbcType=REAL},
+      </if>
+      <if test="days != null">
+        days = #{days,jdbcType=REAL},
+      </if>
+      <if test="sales != null">
+        sales = #{sales,jdbcType=REAL},
+      </if>
+      <if test="statisDate != null">
+        statis_date = #{statisDate,jdbcType=DATE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sqc.bean.Categ4IndexWithPharm">
+    update t_categ4index_with_pharm
+    set pharm_id = #{pharmId,jdbcType=CHAR},
+      categ_id = #{categId,jdbcType=CHAR},
+      categ_index = #{categIndex,jdbcType=REAL},
+      categ_avg_price = #{categAvgPrice,jdbcType=REAL},
+      days = #{days,jdbcType=REAL},
+      sales = #{sales,jdbcType=REAL},
+      statis_date = #{statisDate,jdbcType=DATE}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

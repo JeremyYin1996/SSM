@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sqc.dao.DrugMapper">
+  <resultMap id="BaseResultMap" type="com.sqc.bean.Drug">
+    <id column="drug_id" jdbcType="CHAR" property="drugId" />
+    <result column="drug_name" jdbcType="VARCHAR" property="drugName" />
+    <result column="common_drug_name" jdbcType="VARCHAR" property="commonDrugName" />
+    <result column="english_name" jdbcType="VARCHAR" property="englishName" />
+    <result column="dosage_form" jdbcType="VARCHAR" property="dosageForm" />
+    <result column="atc_code" jdbcType="CHAR" property="atcCode" />
+    <result column="approval_number" jdbcType="VARCHAR" property="approvalNumber" />
+    <result column="approval_validity" jdbcType="DATE" property="approvalValidity" />
+    <result column="bar_code" jdbcType="CHAR" property="barCode" />
+    <result column="manufacturer" jdbcType="VARCHAR" property="manufacturer" />
+    <result column="specifications" jdbcType="REAL" property="specifications" />
+    <result column="spec_unit" jdbcType="VARCHAR" property="specUnit" />
+    <result column="numbers" jdbcType="TINYINT" property="numbers" />
+    <result column="num_unit" jdbcType="VARCHAR" property="numUnit" />
+    <result column="ddd" jdbcType="REAL" property="ddd" />
+    <result column="categ_id" jdbcType="CHAR" property="categId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  
+  <resultMap id="WithCategResultMap" type="com.sqc.bean.Drug">
+    <id column="drug_id" jdbcType="CHAR" property="drugId" />
+    <result column="drug_name" jdbcType="VARCHAR" property="drugName" />
+    <result column="common_drug_name" jdbcType="VARCHAR" property="commonDrugName" />
+    <result column="english_name" jdbcType="VARCHAR" property="englishName" />
+    <result column="dosage_form" jdbcType="VARCHAR" property="dosageForm" />
+    <result column="atc_code" jdbcType="CHAR" property="atcCode" />
+    <result column="approval_number" jdbcType="VARCHAR" property="approvalNumber" />
+    <result column="approval_validity" jdbcType="DATE" property="approvalValidity" />
+    <result column="bar_code" jdbcType="CHAR" property="barCode" />
+    <result column="manufacturer" jdbcType="VARCHAR" property="manufacturer" />
+    <result column="spec" jdbcType="VARCHAR" property="spec" /> 
+    <result column="ddd" jdbcType="REAL" property="ddd" />
+    <result column="categ_id" jdbcType="CHAR" property="categId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <association property="category" javaType="com.sqc.bean.Category">
+    	<id column="category_id" property="categId"/>
+    	<result column="categ_name" jdbcType="VARCHAR" property="categName" />
+    	<result column="level" jdbcType="CHAR" property="level" />
+    	<result column="parent_id" jdbcType="VARCHAR" property="parentId" />
+    </association>  
+  </resultMap>
+  
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    drug_id, drug_name, common_drug_name, english_name, dosage_form, atc_code, approval_number, 
+    approval_validity, bar_code, manufacturer, specifications, spec_unit, numbers, num_unit, 
+    ddd, categ_id, remark
+  </sql>
+
+  <sql id="WithCateg_Column_List">
+  	d.drug_id, d.drug_name, d.common_drug_name, d.english_name, d.dosage_form, d.atc_code,
+  	d.approval_number, 
+  	d.approval_validity, d.bar_code, d.manufacturer, 
+  	CONCAT(d.specifications,d.spec_unit,'*',d.numbers,d.num_unit) AS spec,
+    d.ddd, d.categ_id, remark, 
+    c.categ_id category_id,c.categ_name,c.level,c.parent_id
+  </sql>
+
+   <select id="selectByExample" parameterType="com.sqc.bean.DrugExample" resultMap="WithCategResultMap">
+    select 
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="WithCateg_Column_List" />
+    from t_drug d JOIN t_category c  ON d.`categ_id`=c.`categ_id`
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+  <!-- 联合分类表查询 -->
+   <select id="selectByPrimaryKeyWithCateg" parameterType="java.lang.String" resultMap="WithCategResultMap">
+    select 
+    <include refid="WithCateg_Column_List" />
+    from t_drug d LEFT JOIN t_category c  ON d.`categ_id`=c.`categ_id`
+    where drug_id = #{drugId,jdbcType=CHAR}
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_drug
+    where drug_id = #{drugId,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_drug
+    where drug_id = #{drugId,jdbcType=CHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.sqc.bean.DrugExample">
+    delete from t_drug
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.sqc.bean.Drug">
+    insert into t_drug (drug_id, drug_name, common_drug_name, 
+      english_name, dosage_form, atc_code, 
+      approval_number, approval_validity, bar_code, 
+      manufacturer, specifications, spec_unit, 
+      numbers, num_unit, ddd, 
+      categ_id, remark)
+    values (#{drugId,jdbcType=CHAR}, #{drugName,jdbcType=VARCHAR}, #{commonDrugName,jdbcType=VARCHAR}, 
+      #{englishName,jdbcType=VARCHAR}, #{dosageForm,jdbcType=VARCHAR}, #{atcCode,jdbcType=CHAR}, 
+      #{approvalNumber,jdbcType=VARCHAR}, #{approvalValidity,jdbcType=DATE}, #{barCode,jdbcType=CHAR}, 
+      #{manufacturer,jdbcType=VARCHAR}, #{specifications,jdbcType=REAL}, #{specUnit,jdbcType=VARCHAR}, 
+      #{numbers,jdbcType=TINYINT}, #{numUnit,jdbcType=VARCHAR}, #{ddd,jdbcType=REAL}, 
+      #{categId,jdbcType=CHAR}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sqc.bean.Drug">
+    insert into t_drug
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="drugId != null">
+        drug_id,
+      </if>
+      <if test="drugName != null">
+        drug_name,
+      </if>
+      <if test="commonDrugName != null">
+        common_drug_name,
+      </if>
+      <if test="englishName != null">
+        english_name,
+      </if>
+      <if test="dosageForm != null">
+        dosage_form,
+      </if>
+      <if test="atcCode != null">
+        atc_code,
+      </if>
+      <if test="approvalNumber != null">
+        approval_number,
+      </if>
+      <if test="approvalValidity != null">
+        approval_validity,
+      </if>
+      <if test="barCode != null">
+        bar_code,
+      </if>
+      <if test="manufacturer != null">
+        manufacturer,
+      </if>
+      <if test="specifications != null">
+        specifications,
+      </if>
+      <if test="specUnit != null">
+        spec_unit,
+      </if>
+      <if test="numbers != null">
+        numbers,
+      </if>
+      <if test="numUnit != null">
+        num_unit,
+      </if>
+      <if test="ddd != null">
+        ddd,
+      </if>
+      <if test="categId != null">
+        categ_id,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="drugId != null">
+        #{drugId,jdbcType=CHAR},
+      </if>
+      <if test="drugName != null">
+        #{drugName,jdbcType=VARCHAR},
+      </if>
+      <if test="commonDrugName != null">
+        #{commonDrugName,jdbcType=VARCHAR},
+      </if>
+      <if test="englishName != null">
+        #{englishName,jdbcType=VARCHAR},
+      </if>
+      <if test="dosageForm != null">
+        #{dosageForm,jdbcType=VARCHAR},
+      </if>
+      <if test="atcCode != null">
+        #{atcCode,jdbcType=CHAR},
+      </if>
+      <if test="approvalNumber != null">
+        #{approvalNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="approvalValidity != null">
+        #{approvalValidity,jdbcType=DATE},
+      </if>
+      <if test="barCode != null">
+        #{barCode,jdbcType=CHAR},
+      </if>
+      <if test="manufacturer != null">
+        #{manufacturer,jdbcType=VARCHAR},
+      </if>
+      <if test="specifications != null">
+        #{specifications,jdbcType=REAL},
+      </if>
+      <if test="specUnit != null">
+        #{specUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="numbers != null">
+        #{numbers,jdbcType=TINYINT},
+      </if>
+      <if test="numUnit != null">
+        #{numUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="ddd != null">
+        #{ddd,jdbcType=REAL},
+      </if>
+      <if test="categId != null">
+        #{categId,jdbcType=CHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.sqc.bean.DrugExample" resultType="java.lang.Long">
+    select count(*) from t_drug
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update t_drug
+    <set>
+      <if test="record.drugId != null">
+        drug_id = #{record.drugId,jdbcType=CHAR},
+      </if>
+      <if test="record.drugName != null">
+        drug_name = #{record.drugName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.commonDrugName != null">
+        common_drug_name = #{record.commonDrugName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.englishName != null">
+        english_name = #{record.englishName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dosageForm != null">
+        dosage_form = #{record.dosageForm,jdbcType=VARCHAR},
+      </if>
+      <if test="record.atcCode != null">
+        atc_code = #{record.atcCode,jdbcType=CHAR},
+      </if>
+      <if test="record.approvalNumber != null">
+        approval_number = #{record.approvalNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.approvalValidity != null">
+        approval_validity = #{record.approvalValidity,jdbcType=DATE},
+      </if>
+      <if test="record.barCode != null">
+        bar_code = #{record.barCode,jdbcType=CHAR},
+      </if>
+      <if test="record.manufacturer != null">
+        manufacturer = #{record.manufacturer,jdbcType=VARCHAR},
+      </if>
+      <if test="record.specifications != null">
+        specifications = #{record.specifications,jdbcType=REAL},
+      </if>
+      <if test="record.specUnit != null">
+        spec_unit = #{record.specUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="record.numbers != null">
+        numbers = #{record.numbers,jdbcType=TINYINT},
+      </if>
+      <if test="record.numUnit != null">
+        num_unit = #{record.numUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ddd != null">
+        ddd = #{record.ddd,jdbcType=REAL},
+      </if>
+      <if test="record.categId != null">
+        categ_id = #{record.categId,jdbcType=CHAR},
+      </if>
+      <if test="record.remark != null">
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update t_drug
+    set drug_id = #{record.drugId,jdbcType=CHAR},
+      drug_name = #{record.drugName,jdbcType=VARCHAR},
+      common_drug_name = #{record.commonDrugName,jdbcType=VARCHAR},
+      english_name = #{record.englishName,jdbcType=VARCHAR},
+      dosage_form = #{record.dosageForm,jdbcType=VARCHAR},
+      atc_code = #{record.atcCode,jdbcType=CHAR},
+      approval_number = #{record.approvalNumber,jdbcType=VARCHAR},
+      approval_validity = #{record.approvalValidity,jdbcType=DATE},
+      bar_code = #{record.barCode,jdbcType=CHAR},
+      manufacturer = #{record.manufacturer,jdbcType=VARCHAR},
+      specifications = #{record.specifications,jdbcType=REAL},
+      spec_unit = #{record.specUnit,jdbcType=VARCHAR},
+      numbers = #{record.numbers,jdbcType=TINYINT},
+      num_unit = #{record.numUnit,jdbcType=VARCHAR},
+      ddd = #{record.ddd,jdbcType=REAL},
+      categ_id = #{record.categId,jdbcType=CHAR},
+      remark = #{record.remark,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sqc.bean.Drug">
+    update t_drug
+    <set>
+      <if test="drugName != null">
+        drug_name = #{drugName,jdbcType=VARCHAR},
+      </if>
+      <if test="commonDrugName != null">
+        common_drug_name = #{commonDrugName,jdbcType=VARCHAR},
+      </if>
+      <if test="englishName != null">
+        english_name = #{englishName,jdbcType=VARCHAR},
+      </if>
+      <if test="dosageForm != null">
+        dosage_form = #{dosageForm,jdbcType=VARCHAR},
+      </if>
+      <if test="atcCode != null">
+        atc_code = #{atcCode,jdbcType=CHAR},
+      </if>
+      <if test="approvalNumber != null">
+        approval_number = #{approvalNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="approvalValidity != null">
+        approval_validity = #{approvalValidity,jdbcType=DATE},
+      </if>
+      <if test="barCode != null">
+        bar_code = #{barCode,jdbcType=CHAR},
+      </if>
+      <if test="manufacturer != null">
+        manufacturer = #{manufacturer,jdbcType=VARCHAR},
+      </if>
+      <if test="specifications != null">
+        specifications = #{specifications,jdbcType=REAL},
+      </if>
+      <if test="specUnit != null">
+        spec_unit = #{specUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="numbers != null">
+        numbers = #{numbers,jdbcType=TINYINT},
+      </if>
+      <if test="numUnit != null">
+        num_unit = #{numUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="ddd != null">
+        ddd = #{ddd,jdbcType=REAL},
+      </if>
+      <if test="categId != null">
+        categ_id = #{categId,jdbcType=CHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where drug_id = #{drugId,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sqc.bean.Drug">
+    update t_drug
+    set drug_name = #{drugName,jdbcType=VARCHAR},
+      common_drug_name = #{commonDrugName,jdbcType=VARCHAR},
+      english_name = #{englishName,jdbcType=VARCHAR},
+      dosage_form = #{dosageForm,jdbcType=VARCHAR},
+      atc_code = #{atcCode,jdbcType=CHAR},
+      approval_number = #{approvalNumber,jdbcType=VARCHAR},
+      approval_validity = #{approvalValidity,jdbcType=DATE},
+      bar_code = #{barCode,jdbcType=CHAR},
+      manufacturer = #{manufacturer,jdbcType=VARCHAR},
+      specifications = #{specifications,jdbcType=REAL},
+      spec_unit = #{specUnit,jdbcType=VARCHAR},
+      numbers = #{numbers,jdbcType=TINYINT},
+      num_unit = #{numUnit,jdbcType=VARCHAR},
+      ddd = #{ddd,jdbcType=REAL},
+      categ_id = #{categId,jdbcType=CHAR},
+      remark = #{remark,jdbcType=VARCHAR}
+    where drug_id = #{drugId,jdbcType=CHAR}
+  </update>
+</mapper>

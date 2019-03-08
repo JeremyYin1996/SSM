@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sqc.dao.ShortageMapper">
+  <resultMap id="BaseResultMap" type="com.sqc.bean.Shortage">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="drug_id" jdbcType="CHAR" property="drugId" />
+    <result column="pharm_id" jdbcType="CHAR" property="pharmId" />
+    <result column="short_num" jdbcType="INTEGER" property="shortNum" />
+    <result column="short_date" jdbcType="DATE" property="shortDate" />
+    <result column="add_time" jdbcType="DATE" property="addTime" />
+    <result column="add_user" jdbcType="CHAR" property="addUser" />
+    <result column="if_deleted" jdbcType="BIT" property="ifDeleted" />
+    <result column="delete_user" jdbcType="CHAR" property="deleteUser" />
+  </resultMap>
+  
+  <resultMap id="WithDrugResultMap" type="com.sqc.bean.Shortage">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="drug_id" jdbcType="CHAR" property="drugId" />
+    <result column="pharm_id" jdbcType="CHAR" property="pharmId" />
+    <result column="short_num" jdbcType="INTEGER" property="shortNum" />
+    <result column="short_date" jdbcType="DATE" property="shortDate" />
+    <result column="add_time" jdbcType="DATE" property="addTime" />
+    <result column="add_user" jdbcType="CHAR" property="addUser" />
+    <result column="if_deleted" jdbcType="BIT" property="ifDeleted" />
+    <result column="delete_user" jdbcType="CHAR" property="deleteUser" />
+    <association property="drug" javaType="com.sqc.bean.Drug">
+    	<id column="did" property="drugId"/>
+    	<result column="drug_name" jdbcType="VARCHAR" property="drugName" />
+    	<result column="common_drug_name" jdbcType="VARCHAR" property="commonDrugName" />
+        <result column="dosage_form" jdbcType="VARCHAR" property="dosageForm" />
+        <result column="approval_number" jdbcType="VARCHAR" property="approvalNumber" />
+        <result column="bar_code" jdbcType="CHAR" property="barCode" />
+        <result column="manufacturer" jdbcType="VARCHAR" property="manufacturer" />
+        <result column="spec" jdbcType="VARCHAR" property="spec" />
+         <association property="category" javaType="com.sqc.bean.Category">
+    	<id column="category_id" property="categId"/>
+    	<result column="categ_name" jdbcType="VARCHAR" property="categName" />
+    	<result column="level" jdbcType="CHAR" property="level" />
+    	<result column="parent_id" jdbcType="VARCHAR" property="parentId" />
+        </association>  
+    </association>
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, drug_id, pharm_id, short_num, short_date, add_time, add_user, if_deleted, delete_user
+  </sql>
+    <sql id="WithDrug_Column_List">
+   s.`drug_id`,s.`pharm_id`,s.`short_date`,s.`short_num`,d.`drug_id` did,d.`drug_name`,d.`common_drug_name`,
+   d.`approval_number`,d.`dosage_form`,d.`bar_code`,CONCAT(d.specifications,d.spec_unit,'*',d.numbers,d.num_unit) AS spec,
+   d.`manufacturer`,c.`categ_id` category_id,c.`categ_name`
+  </sql>
+ 
+  <!-- List<Shortage> selectShortageByPharmId(Map<String, Object> map); -->
+   <select id="selectShortageByPharmId" parameterType="map" resultMap="WithDrugResultMap">
+    select
+    <if test="distinct">
+    distinct
+    </if>
+    <include refid="WithDrug_Column_List" />
+     FROM t_shortage s JOIN t_drug d ON pharm_id=#{pharmId} AND s.`drug_id`=d.`drug_id`
+     JOIN t_category c ON d.`categ_id`=c.`categ_id`
+     <if test="drugName!=null"> and	
+			d.drug_name LIKE CONCAT('%',#{drugName},'%')
+	</if>
+     <if test="approvalNumber!=null" >
+			and d.approval_number=#{approvalNumber}
+	 </if>
+  </select>
+  
+  
+  <select id="selectByExample" parameterType="com.sqc.bean.ShortageExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_shortage
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_shortage
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_shortage
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.sqc.bean.ShortageExample">
+    delete from t_shortage
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.sqc.bean.Shortage">
+    insert into t_shortage (id, drug_id, pharm_id, 
+      short_num, short_date, add_time, 
+      add_user, if_deleted, delete_user
+      )
+    values (#{id,jdbcType=INTEGER}, #{drugId,jdbcType=CHAR}, #{pharmId,jdbcType=CHAR}, 
+      #{shortNum,jdbcType=INTEGER}, #{shortDate,jdbcType=DATE}, #{addTime,jdbcType=DATE}, 
+      #{addUser,jdbcType=CHAR}, #{ifDeleted,jdbcType=BIT}, #{deleteUser,jdbcType=CHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sqc.bean.Shortage">
+    insert into t_shortage
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="drugId != null">
+        drug_id,
+      </if>
+      <if test="pharmId != null">
+        pharm_id,
+      </if>
+      <if test="shortNum != null">
+        short_num,
+      </if>
+      <if test="shortDate != null">
+        short_date,
+      </if>
+      <if test="addTime != null">
+        add_time,
+      </if>
+      <if test="addUser != null">
+        add_user,
+      </if>
+      <if test="ifDeleted != null">
+        if_deleted,
+      </if>
+      <if test="deleteUser != null">
+        delete_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="drugId != null">
+        #{drugId,jdbcType=CHAR},
+      </if>
+      <if test="pharmId != null">
+        #{pharmId,jdbcType=CHAR},
+      </if>
+      <if test="shortNum != null">
+        #{shortNum,jdbcType=INTEGER},
+      </if>
+      <if test="shortDate != null">
+        #{shortDate,jdbcType=DATE},
+      </if>
+      <if test="addTime != null">
+        #{addTime,jdbcType=DATE},
+      </if>
+      <if test="addUser != null">
+        #{addUser,jdbcType=CHAR},
+      </if>
+      <if test="ifDeleted != null">
+        #{ifDeleted,jdbcType=BIT},
+      </if>
+      <if test="deleteUser != null">
+        #{deleteUser,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.sqc.bean.ShortageExample" resultType="java.lang.Long">
+    select count(*) from t_shortage
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update t_shortage
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.drugId != null">
+        drug_id = #{record.drugId,jdbcType=CHAR},
+      </if>
+      <if test="record.pharmId != null">
+        pharm_id = #{record.pharmId,jdbcType=CHAR},
+      </if>
+      <if test="record.shortNum != null">
+        short_num = #{record.shortNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.shortDate != null">
+        short_date = #{record.shortDate,jdbcType=DATE},
+      </if>
+      <if test="record.addTime != null">
+        add_time = #{record.addTime,jdbcType=DATE},
+      </if>
+      <if test="record.addUser != null">
+        add_user = #{record.addUser,jdbcType=CHAR},
+      </if>
+      <if test="record.ifDeleted != null">
+        if_deleted = #{record.ifDeleted,jdbcType=BIT},
+      </if>
+      <if test="record.deleteUser != null">
+        delete_user = #{record.deleteUser,jdbcType=CHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update t_shortage
+    set id = #{record.id,jdbcType=INTEGER},
+      drug_id = #{record.drugId,jdbcType=CHAR},
+      pharm_id = #{record.pharmId,jdbcType=CHAR},
+      short_num = #{record.shortNum,jdbcType=INTEGER},
+      short_date = #{record.shortDate,jdbcType=DATE},
+      add_time = #{record.addTime,jdbcType=DATE},
+      add_user = #{record.addUser,jdbcType=CHAR},
+      if_deleted = #{record.ifDeleted,jdbcType=BIT},
+      delete_user = #{record.deleteUser,jdbcType=CHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sqc.bean.Shortage">
+    update t_shortage
+    <set>
+      <if test="drugId != null">
+        drug_id = #{drugId,jdbcType=CHAR},
+      </if>
+      <if test="pharmId != null">
+        pharm_id = #{pharmId,jdbcType=CHAR},
+      </if>
+      <if test="shortNum != null">
+        short_num = #{shortNum,jdbcType=INTEGER},
+      </if>
+      <if test="shortDate != null">
+        short_date = #{shortDate,jdbcType=DATE},
+      </if>
+      <if test="addTime != null">
+        add_time = #{addTime,jdbcType=DATE},
+      </if>
+      <if test="addUser != null">
+        add_user = #{addUser,jdbcType=CHAR},
+      </if>
+      <if test="ifDeleted != null">
+        if_deleted = #{ifDeleted,jdbcType=BIT},
+      </if>
+      <if test="deleteUser != null">
+        delete_user = #{deleteUser,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sqc.bean.Shortage">
+    update t_shortage
+    set drug_id = #{drugId,jdbcType=CHAR},
+      pharm_id = #{pharmId,jdbcType=CHAR},
+      short_num = #{shortNum,jdbcType=INTEGER},
+      short_date = #{shortDate,jdbcType=DATE},
+      add_time = #{addTime,jdbcType=DATE},
+      add_user = #{addUser,jdbcType=CHAR},
+      if_deleted = #{ifDeleted,jdbcType=BIT},
+      delete_user = #{deleteUser,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

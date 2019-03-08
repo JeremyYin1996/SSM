@@ -1,0 +1,23 @@
+import java.util.Scanner;
+
+/**
+ * @author Jeremy
+ * @date 2018-12-26
+ * @time 下午1:33:34
+ */
+
+public class Test3 {
+public static void main(String[] args) {
+	Scanner scanner = new Scanner(System.in);
+	System.out.println("请输入一个4位数：");
+	int a = scanner.nextInt();
+	int b = a%10;  			//个位
+	int c = (a/10)%10;		//十位
+	int d = (a/100)%10;		//百位
+	int e = (a/1000)%10;	//千位
+	String f = (b+c+d+e)>20?"大于20":"不大于20";
+	System.out.println(f);
+}
+}
+
+

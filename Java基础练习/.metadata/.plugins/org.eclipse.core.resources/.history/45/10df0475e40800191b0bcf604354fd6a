@@ -1,0 +1,27 @@
+import java.util.Scanner;
+
+/**
+ * @author Jeremy
+ * @date 2018-12-26
+ * @time ÏÂÎç2:02:18
+ */
+
+public class Test4 {
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("ÇëÊäÈëÔÂ·Ý£º");
+		int yue = scanner.nextInt();
+		if((yue>=3)&&(yue<=5)){
+			System.out.println("´º¼¾");
+		}else if(yue>=6&&yue<=7){
+			System.out.println("ÏÄ¼¾");
+		}else if(yue>=8&&yue<=11){
+			System.out.println("Çï¼¾");
+		}else if( (yue>=11&&yue<=12)||(yue==1) ){
+			System.out.println("¶¬¼¾");
+		}
+		
+	}
+}
+
+

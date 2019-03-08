@@ -1,0 +1,50 @@
+.showCenter{
+		display:block;
+		margin:auto;
+		margin-top:16px;
+		width:auto;
+		height:auto;
+		border: solid 1px #CCC;
+	}
+
+#line-labels-upper-left{
+		margin-left:100px;
+		margin-top:20px;
+		float:left; 
+		width:530px;
+		height:300px;
+		border: solid 1px #CCC;
+	}
+#line-labels-upper-right{
+		vertical-align:center;
+		text-align:center;
+		width: 530px; 
+		height: 300px; 
+		margin-left:700px;
+		margin-top:20px;
+	}
+	
+#line-labels-lower-left{
+		margin-left:100px;
+		margin-top:40px;
+		float:left;
+		width:530px;
+		height:300px;
+		border: solid 1px #CCC;
+	}
+#line-labels-lower-right{
+		margin-left:700px;
+		margin-top:40px;
+		vertical-align:center;
+		text-align:center;
+		width: 530px; 
+		height: 300px; 
+	
+	}
+.highcharts-container {
+		border: solid 1px #CCC;
+	}
+	
+	
+	
+	

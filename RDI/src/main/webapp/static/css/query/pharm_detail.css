@@ -1,0 +1,134 @@
+	#showAction{
+		background-color:#fbfbfb;
+		margin-left:20px;
+		margin-top:20px;
+		float:left;
+		width:700px;
+		height:620px;
+		border: solid 1px #CCC;
+	}
+	#showAction_menu{
+		background-color:#fff;
+		margin-left:20px;
+		margin-top:20px;
+		float:left;
+		width:250px;
+		height:580px;
+		border: solid 1px #CCC;
+	}
+	#showAction_menu table{
+		border-spacing: 0px;
+		margin-top: 0px;
+    	width:100%;
+	}
+	#showAction_menu th{
+		background: #f7f0f7;
+   	 	border: #e5e5e5 solid 1px;
+	    font-weight: bold;
+    	text-align: center;
+    	height: 30px;
+    	line-height: 30px;
+	}
+	.clickClass{
+		background: #9999CC;
+		color:#fff;
+	}
+	.noclickClass{
+		background: #fff;
+		color:black;
+	}
+	#showAction_menu td{
+		border: #e5e5e5 solid 1px;
+		height: 30px;
+   	 	line-height: 30px;
+   	 	text-align: center;
+   	 	cursor:pointer;
+	}
+	#showAction_menu td:hover{
+		background: #9999CC;
+		color:#fff;
+	}
+	#showAction_text{
+		background-color:#fff;
+		margin-right:20px;
+		margin-top:20px;
+		float:right;
+		width:380px;
+		height:580px;
+		border: solid 1px #CCC;
+	}
+	#showAction_text table{
+		border-spacing: 0px;
+		margin-top: 0px;
+    	width:100%;
+	}
+	#showAction_text th{
+		background: #f7f0f7;
+   	 	border: #e5e5e5 solid 1px;
+	    font-weight: bold;
+    	text-align: center;
+    	height: 30px;
+    	width:100px;
+    	line-height: 30px;
+	}
+
+	#showAction_text td{
+		border: #e5e5e5 solid 1px;
+		height: 30px;
+   	 	line-height: 30px;
+   	 	text-align: center;
+	}
+	.showCenter{
+		display:block;
+		margin:auto;
+		margin-top:16px;
+		width:1200px;
+		height:670px;
+		border: solid 1px #CCC;
+	}
+	#showData{
+		margin-left:20px;
+		margin-top:20px;
+		float:left;
+		width:430px;
+		height:620px;
+		border: solid 1px #CCC;
+	}
+	#line-labels{
+		vertical-align:center;
+		text-align:center;
+		width: 700px; 
+		height: 300px; 
+		margin-left:470px;
+		margin-top:20px;
+	}
+	#pie-legend{
+		vertical-align:center;
+		text-align:center;
+		width: 700px; 
+		height: 300px; 
+		margin-left:470px;
+		margin-top:20px;
+	}
+	.highcharts-container {
+		border: solid 1px #CCC;
+	}
+	#showData table{
+		border-spacing: 0px;
+		margin-top: 0px;
+    	width:100%;
+	}
+	#showData th{
+		background: #f7f0f7;
+   	 	border: #e5e5e5 solid 1px;
+	    font-weight: bold;
+    	text-align: center;
+    	height: 34px;
+    	line-height: 34px;
+	}
+	#showData td{
+		border: #e5e5e5 solid 1px;
+		height: 34px;
+   	 	line-height: 34px;
+   	 	text-align: center;
+	}

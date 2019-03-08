@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sqc.dao.ManufacturerMapper">
+  <resultMap id="BaseResultMap" type="com.sqc.bean.Manufacturer">
+    <id column="manu_id" jdbcType="VARCHAR" property="manuId" />
+    <result column="manu_name" jdbcType="VARCHAR" property="manuName" />
+    <result column="manu_adress" jdbcType="VARCHAR" property="manuAdress" />
+    <result column="manu_phone" jdbcType="CHAR" property="manuPhone" />
+    <result column="add_time" jdbcType="DATE" property="addTime" />
+    <result column="add_user" jdbcType="CHAR" property="addUser" />
+    <result column="if_deleted" jdbcType="BIT" property="ifDeleted" />
+    <result column="delete_user" jdbcType="VARCHAR" property="deleteUser" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    manu_id, manu_name, manu_adress, manu_phone, add_time, add_user, if_deleted, delete_user
+  </sql>
+  <select id="selectByExample" parameterType="com.sqc.bean.ManufacturerExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_manufacturer
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_manufacturer
+    where manu_id = #{manuId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_manufacturer
+    where manu_id = #{manuId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.sqc.bean.ManufacturerExample">
+    delete from t_manufacturer
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.sqc.bean.Manufacturer">
+    insert into t_manufacturer (manu_id, manu_name, manu_adress, 
+      manu_phone, add_time, add_user, 
+      if_deleted, delete_user)
+    values (#{manuId,jdbcType=VARCHAR}, #{manuName,jdbcType=VARCHAR}, #{manuAdress,jdbcType=VARCHAR}, 
+      #{manuPhone,jdbcType=CHAR}, #{addTime,jdbcType=DATE}, #{addUser,jdbcType=CHAR}, 
+      #{ifDeleted,jdbcType=BIT}, #{deleteUser,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sqc.bean.Manufacturer">
+    insert into t_manufacturer
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="manuId != null">
+        manu_id,
+      </if>
+      <if test="manuName != null">
+        manu_name,
+      </if>
+      <if test="manuAdress != null">
+        manu_adress,
+      </if>
+      <if test="manuPhone != null">
+        manu_phone,
+      </if>
+      <if test="addTime != null">
+        add_time,
+      </if>
+      <if test="addUser != null">
+        add_user,
+      </if>
+      <if test="ifDeleted != null">
+        if_deleted,
+      </if>
+      <if test="deleteUser != null">
+        delete_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="manuId != null">
+        #{manuId,jdbcType=VARCHAR},
+      </if>
+      <if test="manuName != null">
+        #{manuName,jdbcType=VARCHAR},
+      </if>
+      <if test="manuAdress != null">
+        #{manuAdress,jdbcType=VARCHAR},
+      </if>
+      <if test="manuPhone != null">
+        #{manuPhone,jdbcType=CHAR},
+      </if>
+      <if test="addTime != null">
+        #{addTime,jdbcType=DATE},
+      </if>
+      <if test="addUser != null">
+        #{addUser,jdbcType=CHAR},
+      </if>
+      <if test="ifDeleted != null">
+        #{ifDeleted,jdbcType=BIT},
+      </if>
+      <if test="deleteUser != null">
+        #{deleteUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.sqc.bean.ManufacturerExample" resultType="java.lang.Long">
+    select count(*) from t_manufacturer
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update t_manufacturer
+    <set>
+      <if test="record.manuId != null">
+        manu_id = #{record.manuId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.manuName != null">
+        manu_name = #{record.manuName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.manuAdress != null">
+        manu_adress = #{record.manuAdress,jdbcType=VARCHAR},
+      </if>
+      <if test="record.manuPhone != null">
+        manu_phone = #{record.manuPhone,jdbcType=CHAR},
+      </if>
+      <if test="record.addTime != null">
+        add_time = #{record.addTime,jdbcType=DATE},
+      </if>
+      <if test="record.addUser != null">
+        add_user = #{record.addUser,jdbcType=CHAR},
+      </if>
+      <if test="record.ifDeleted != null">
+        if_deleted = #{record.ifDeleted,jdbcType=BIT},
+      </if>
+      <if test="record.deleteUser != null">
+        delete_user = #{record.deleteUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update t_manufacturer
+    set manu_id = #{record.manuId,jdbcType=VARCHAR},
+      manu_name = #{record.manuName,jdbcType=VARCHAR},
+      manu_adress = #{record.manuAdress,jdbcType=VARCHAR},
+      manu_phone = #{record.manuPhone,jdbcType=CHAR},
+      add_time = #{record.addTime,jdbcType=DATE},
+      add_user = #{record.addUser,jdbcType=CHAR},
+      if_deleted = #{record.ifDeleted,jdbcType=BIT},
+      delete_user = #{record.deleteUser,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sqc.bean.Manufacturer">
+    update t_manufacturer
+    <set>
+      <if test="manuName != null">
+        manu_name = #{manuName,jdbcType=VARCHAR},
+      </if>
+      <if test="manuAdress != null">
+        manu_adress = #{manuAdress,jdbcType=VARCHAR},
+      </if>
+      <if test="manuPhone != null">
+        manu_phone = #{manuPhone,jdbcType=CHAR},
+      </if>
+      <if test="addTime != null">
+        add_time = #{addTime,jdbcType=DATE},
+      </if>
+      <if test="addUser != null">
+        add_user = #{addUser,jdbcType=CHAR},
+      </if>
+      <if test="ifDeleted != null">
+        if_deleted = #{ifDeleted,jdbcType=BIT},
+      </if>
+      <if test="deleteUser != null">
+        delete_user = #{deleteUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where manu_id = #{manuId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sqc.bean.Manufacturer">
+    update t_manufacturer
+    set manu_name = #{manuName,jdbcType=VARCHAR},
+      manu_adress = #{manuAdress,jdbcType=VARCHAR},
+      manu_phone = #{manuPhone,jdbcType=CHAR},
+      add_time = #{addTime,jdbcType=DATE},
+      add_user = #{addUser,jdbcType=CHAR},
+      if_deleted = #{ifDeleted,jdbcType=BIT},
+      delete_user = #{deleteUser,jdbcType=VARCHAR}
+    where manu_id = #{manuId,jdbcType=VARCHAR}
+  </update>
+</mapper>

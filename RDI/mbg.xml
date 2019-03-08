@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+
+	<context id="DB2Tables" targetRuntime="MyBatis3">
+		<commentGenerator>
+			<property name="suppressAllComments" value="true" />
+		</commentGenerator>
+		<!-- 配置数据库连接 -->
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
+			connectionURL="jdbc:mysql://localhost:3306/rdi" 
+			userId="root"
+			password="yhn1996">
+		</jdbcConnection>
+
+		<javaTypeResolver>
+			<property name="forceBigDecimals" value="false" />
+		</javaTypeResolver>
+
+		<!-- 指定javaBean生成的位置 -->
+		<javaModelGenerator targetPackage="com.sqc.bean"
+			targetProject=".\src\main\java">
+			<property name="enableSubPackages" value="true" />
+			<property name="trimStrings" value="true" />
+		</javaModelGenerator>
+
+		<!--指定sql映射文件生成的位置 -->
+		<sqlMapGenerator targetPackage="mapper" targetProject=".\src\main\resources">
+			<property name="enableSubPackages" value="true" />
+		</sqlMapGenerator>
+
+		<!-- 指定dao接口生成的位置，mapper接口 -->
+		<javaClientGenerator type="XMLMAPPER"
+			targetPackage="com.sqc.dao" targetProject=".\src\main\java">
+			<property name="enableSubPackages" value="true" />
+		</javaClientGenerator>
+
+
+		<!-- table指定每个表的生成策略
+		<table tableName="t_authority" domainObjectName="Authority"></table>
+		<table tableName="t_category" domainObjectName="Category"></table>
+		
+		<table tableName="t_district" domainObjectName="District"></table>
+		<table tableName="t_drug" domainObjectName="Drug"></table>
+	
+		<table tableName="t_manufacturer" domainObjectName="Manufacturer"></table>
+		<table tableName="t_pharmacy" domainObjectName="Pharmacy"></table>
+		<table tableName="t_promotion" domainObjectName="Promotion"></table>
+		<table tableName="t_purchase" domainObjectName="Purchase"></table>
+		<table tableName="t_role" domainObjectName="Role"></table>
+		<table tableName="t_sales" domainObjectName="Sales"></table>
+		<table tableName="t_shortage" domainObjectName="Shortage"></table>
+		<table tableName="t_user" domainObjectName="User"></table>
+		
+		 <table tableName="t_drugindex" domainObjectName="DrugIndex"></table>
+		 <table tableName="t_drugindex_with_pharm" domainObjectName="DrugIndexWithPharm"></table>
+		 <table tableName="t_drugindex_with_district" domainObjectName="DrugIndexWithDistrict"></table>
+		 
+		<table tableName="t_categ1index" domainObjectName="Categ1Index"></table>
+		<table tableName="t_categ2index" domainObjectName="Categ2Index"></table>
+		<table tableName="t_categ3index" domainObjectName="Categ3Index"></table>
+		<table tableName="t_categ4index" domainObjectName="Categ4Index"></table>
+		
+		<table tableName="t_categ1index_with_pharm" domainObjectName="Categ1IndexWithPharm"></table>
+		<table tableName="t_categ2index_with_pharm" domainObjectName="Categ2IndexWithPharm"></table>
+		<table tableName="t_categ3index_with_pharm" domainObjectName="Categ3IndexWithPharm"></table>
+		<table tableName="t_categ4index_with_pharm" domainObjectName="Categ4IndexWithPharm"></table>
+		
+		
+		<table tableName="t_categ1index_with_district" domainObjectName="Categ1IndexWithDistrict"></table>
+		<table tableName="t_categ2index_with_district" domainObjectName="Categ2IndexWithDistrict"></table>
+		<table tableName="t_categ3index_with_district" domainObjectName="Categ3IndexWithDistrict"></table>
+		<table tableName="t_categ4index_with_district" domainObjectName="Categ4IndexWithDistrict"></table>
+		
+        
+		-->
+	
+		<table tableName="temp" domainObjectName="Temp"></table>
+		
+		
+		
+		
+	</context>
+</generatorConfiguration>

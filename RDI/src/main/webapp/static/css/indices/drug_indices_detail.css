@@ -1,0 +1,75 @@
+.showCenter{
+		display:block;
+		margin:auto;
+		margin-top:16px;
+		margin-bottom:20px;
+		width:auto;
+		height:auto;
+		border: solid 1px #CCC;
+	}
+	
+
+#showData{
+		margin-left:100px;
+		margin-top:20px;
+		float:left;
+		width:530px;
+		height:350px;
+		border: solid 1px #CCC;
+	}
+#line-labels-upper-right{
+		vertical-align:center;
+		text-align:center;
+		width: 530px; 
+		height: 350px; 
+		margin-left:700px;
+		margin-top:20px;
+	}
+	
+#line-labels-lower-left{
+		margin-left:100px;
+		margin-top:40px;
+		float:left;
+		width:530px;
+		height:300px;
+		border: solid 1px #CCC;
+	}
+#line-labels-lower-right{
+		margin-left:700px;
+		margin-top:40px;
+		vertical-align:center;
+		text-align:center;
+		width: 530px; 
+		height: 300px; 
+	
+	}
+#pie-legend{
+		vertical-align:center;
+		text-align:center;
+		width: 700px; 
+		height: 300px; 
+		margin-left:470px;
+		margin-top:20px;
+	}
+.highcharts-container {
+		border: solid 1px #CCC;
+	}
+#showData table{
+		border-spacing: 0px;
+		margin-top: 0px;
+    	width:100%;
+	}
+#showData th{
+		background: #f7f0f7;
+   	 	border: #e5e5e5 solid 1px;
+	    font-weight: bold;
+    	text-align: center;
+    	height: 34px;
+    	line-height: 34px;
+	}
+#showData td{
+		border: #e5e5e5 solid 1px;
+		height: 34px;
+   	 	line-height: 34px;
+   	 	text-align: center;
+	}

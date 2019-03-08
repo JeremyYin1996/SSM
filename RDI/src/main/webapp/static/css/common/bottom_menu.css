@@ -1,0 +1,37 @@
+
+html, body {
+	margin: 0px;
+	background-color:#fff;
+
+}
+
+
+.bottom {
+	text-align:center;
+	font-family: Î¢ÈíÑÅºÚ; 
+	width: auto;
+	height: 130px;
+}
+
+.bottom a {
+  	text-decoration:none;
+ 	font-weight:50px;
+ 	color:#404040;
+	font-family:"Î¢ÈíÑÅºÚ";
+ 	font-size:15px;
+ 	margin-left:15px;
+}
+.bottom a:hover{
+	color:#8080c0;
+}
+.bottom span {
+	font-weight: 50px;
+	color: #404040;
+	font-family: "Î¢ÈíÑÅºÚ";
+	font-size: 15px;
+	margin-left: 15px;
+}
+.bottom p{
+	font-weight:600;
+}
+

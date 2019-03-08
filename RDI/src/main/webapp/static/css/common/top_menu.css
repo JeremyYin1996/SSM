@@ -1,0 +1,212 @@
+@CHARSET "UTF-8";
+
+html, body {
+	margin: 0px;
+	background-color:#fff;
+}
+
+a {
+	text-decoration: none;
+	color:#fff;
+}
+
+.header {
+	font-family: 微软雅黑;
+	width: auto;
+	height: 125px;
+	background-color: #9999cc;
+}
+
+.logo {
+	float: left;
+	height: 69px;
+	margin-top:30px;
+	
+}
+
+.topmenu ul:not(.managerSecondMenu):not(.pharmSecondMenu):not(.querySecondMenu):not(.indexSecondMenu):not(.guideSecondMenu):not(.warnSecondMenu){
+	font-size:15px;
+	margin-left:0px;
+	list-style-type: none;
+	margin-top:30px;
+	width: auto;
+	height: 60px;
+	float: left;
+}
+
+.topmenu li {
+	width: 95px;
+	height: 50px;
+	text-align: center;
+	line-height: 50px;
+	float: left;
+	cursor: pointer;
+}
+
+.topmenu li:hover {
+	background-color: #8080c0;
+}
+
+.topmenu a {
+	display: inline-block; 
+	width : 100px;
+	height: 50px;
+	color: #fff;
+	width: 100px;
+}
+
+.usersName {
+	color: white; 
+	font-size:16px;
+	text-align : center;
+	line-height:50px;
+	width: 110px;
+	height: 50px;
+	cursor: pointer;
+	border:soild 1px #383838;
+}
+
+.usersName:hover{
+	font-weight:600;
+}
+
+.userMenu {	
+	width:100px;
+	height:60px;
+	color:#fff;
+	margin-top:0px;
+	background-color: #9999cc;
+	z-index:999;
+	
+}
+
+.userMenu li:hover {
+	background-color: #8080c0;
+}
+
+.userMenu li{
+	margin-left:-20px;
+	list-style-type: none;
+	width: 100px;
+	height: 25px;
+	text-align: center;
+	line-height:25px;
+	cursor: pointer;
+}
+
+
+.managerSecondMenu{	
+	position:absolute;
+	width:95px;
+	height:auto;
+	color:#fff;
+	background-color: #9999cc;
+	z-index:9999;
+}
+
+.pharmSecondMenu{
+	position:absolute;
+	width:95px;
+	height:auto;
+	color:#fff;
+	background-color: #9999cc;
+	z-index:9999;
+}
+
+.querySecondMenu{
+	position:absolute;
+	width:95px;
+	height:auto;
+	color:#fff;
+	background-color: #9999cc;
+	z-index:9999;
+}
+
+.indexSecondMenu{
+	position:absolute;
+	width:95px;
+	height:auto;
+	color:#fff;
+	background-color: #9999cc;
+	z-index:9999;
+}
+
+.guideSecondMenu{
+	position:absolute;
+	width:95px;
+	height:auto;
+	color:#fff;
+	background-color: #9999cc;
+	z-index:9999;
+}
+.warnSecondMenu{
+	position:absolute;
+	width:95px;
+	height:auto;
+	color:#fff;
+	background-color: #9999cc;
+	z-index:9999;
+}
+.managerSecondMenu li{
+	margin-left:-40px;
+	list-style-type: none;
+	width: 95px;
+	height: 30px;
+	text-align: center;
+	line-height: 25px;
+	cursor: pointer;
+	
+}
+
+.pharmSecondMenu li{
+	margin-left:-40px;
+	list-style-type: none;
+	width: 95px;
+	height: 30px;
+	text-align: center;
+	line-height:25px;
+	cursor: pointer;
+
+}
+.querySecondMenu li{
+	margin-left:-40px;
+	list-style-type: none;
+	width: 95px;
+	height: 30px;
+	text-align: center;
+	line-height: 25px;
+	cursor: pointer;
+	
+}
+.indexSecondMenu li{
+	margin-left:-40px;
+	list-style-type: none;
+	width:95px;
+	height: 30px;
+	text-align: center;
+	line-height: 25px;
+	cursor: pointer;
+	
+}
+
+.guideSecondMenu li{
+	margin-left:-40px;
+	list-style-type: none;
+	width:95px;
+	height: 30px;
+	text-align: center;
+	line-height: 25px;
+	cursor: pointer;
+	
+}
+.warnSecondMenu li{
+	margin-left:-40px;
+	list-style-type: none;
+	width:95px;
+	height: 30px;
+	text-align: center;
+	line-height: 25px;
+	cursor: pointer;
+	
+}
+

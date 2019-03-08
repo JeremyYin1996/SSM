@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sqc.dao.CategoryMapper">
+  <resultMap id="BaseResultMap" type="com.sqc.bean.Category">
+    <id column="categ_id" jdbcType="VARCHAR" property="categId" />
+    <result column="categ_name" jdbcType="VARCHAR" property="categName" />
+    <result column="level" jdbcType="CHAR" property="level" />
+    <result column="parent_id" jdbcType="VARCHAR" property="parentId" />
+    <result column="if_deleted" jdbcType="BIT" property="ifDeleted" />
+    <result column="delete_user" jdbcType="CHAR" property="deleteUser" />
+  </resultMap>
+  
+   <resultMap id="WithSelfResultMap" type="com.sqc.bean.Category">
+    <id column="categ_id" jdbcType="VARCHAR" property="categId" />
+    <result column="categ_name" jdbcType="VARCHAR" property="categName" />
+    <result column="level" jdbcType="CHAR" property="level" />
+    <result column="parent_id" jdbcType="VARCHAR" property="parentId" />
+    <result column="if_deleted" jdbcType="BIT" property="ifDeleted" />
+    <result column="delete_user" jdbcType="CHAR" property="deleteUser" />
+    <association property="parentCategory" javaType="com.sqc.bean.Category">
+    	<id column="parent_categ_id" property="categId"/>
+    	<result column="parent_categ_name" jdbcType="VARCHAR" property="categName" />
+    	<result column="parent_level" jdbcType="CHAR" property="level" />
+    	<result column="parent_parent_id" jdbcType="VARCHAR" property="parentId" />
+    </association> 
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    categ_id, categ_name, level, parent_id, if_deleted, delete_user
+  </sql>
+  <sql id="With_Self_Column_List">
+    a.`categ_id`,a.`categ_name`,a.`level`,a.`parent_id`,
+    b.`categ_id` parent_categ_id,b.`categ_name` parent_categ_name,
+    b.level parent_level,b.parent_id parent_parent_id
+  </sql>
+  
+
+
+  <!-- String selectMaxCategId(String parentId);  -->
+  <select id="selectMaxCategId" parameterType="java.lang.String" resultType="java.lang.String">
+    SELECT MAX(categ_id)
+    FROM t_category
+    WHERE parent_id=#{parentId jdbcType=VARCHAR}
+  </select>
+  
+ 
+  <!-- The following was written by miaoziqiu -->
+  <select id="selectClassifyByLarge" parameterType="com.sqc.bean.Category" resultMap="BaseResultMap">
+    SELECT a.`categ_id`,a.`categ_name`
+    FROM`t_category` a
+    WHERE a.`level`=1
+  </select>
+    <select id="selectClassifyByMiddle" parameterType="com.sqc.bean.Category" resultMap="BaseResultMap">
+    SELECT a.`categ_id`,a.`categ_name`
+    FROM`t_category` a
+    WHERE a.`parent_id`=#{classifybylargeId}  
+  </select>
+  
+  
+<select id="selectClassifyBySmall" parameterType="com.sqc.bean.Category" resultMap="BaseResultMap">
+    SELECT a.`categ_id`,a.`categ_name`
+    FROM`t_category` a
+    WHERE a.`parent_id`=#{classifybymiddleId}
+ </select>
+ 
+ <select id="selectClassifyByKinds" parameterType="com.sqc.bean.Category" resultMap="BaseResultMap">
+SELECT a.`categ_id`,a.`categ_name`
+FROM`t_category` a
+WHERE a.`parent_id`=#{classifybysmallId}
+ </select>
+ 
+ <!-- The following was written by zx-->
+ <!-- List<Category> selectByParentId(String parentId); -->
+  <select id="selectByParentId" parameterType="java.lang.String" resultMap="WithSelfResultMap">
+    select
+      <include refid="With_Self_Column_List" />
+    FROM t_category a JOIN t_category b ON  a.`parent_id`=#{parentId} AND  a.`parent_id`=b.`categ_id`
+</select>
+
+  
+  <!-- List<Category> selectByExampleAssociationWithSelf(CategoryExample example);  -->
+  <select id="selectByLevelAssociationWithSelf" parameterType="map" resultMap="WithSelfResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="With_Self_Column_List" />
+    FROM t_category a JOIN t_category b ON a.`parent_id`=b.`categ_id` 
+    <if test="categName!=null || categLevel!=null">
+    where
+    </if>
+	<if test="categName!=null">
+		a.categ_name LIKE CONCAT('%',#{categName},'%')
+	</if>
+	<if test="categName!=null and categLevel!=null">
+		and
+	</if>
+	<if test="categLevel!=null">
+		a.level=#{categLevel}
+	</if>		
+</select>
+
+ 
+  <!-- The following was generated by MBG -->
+  <select id="selectByExample" parameterType="com.sqc.bean.CategoryExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_category
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_category
+    where categ_id = #{categId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_category
+    where categ_id = #{categId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.sqc.bean.CategoryExample">
+    delete from t_category
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.sqc.bean.Category">
+    insert into t_category (categ_id, categ_name, level, 
+      parent_id, if_deleted, delete_user
+      )
+    values (#{categId,jdbcType=VARCHAR}, #{categName,jdbcType=VARCHAR}, #{level,jdbcType=CHAR}, 
+      #{parentId,jdbcType=VARCHAR}, #{ifDeleted,jdbcType=BIT}, #{deleteUser,jdbcType=CHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sqc.bean.Category">
+    insert into t_category
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="categId != null">
+        categ_id,
+      </if>
+      <if test="categName != null">
+        categ_name,
+      </if>
+      <if test="level != null">
+        level,
+      </if>
+      <if test="parentId != null">
+        parent_id,
+      </if>
+      <if test="ifDeleted != null">
+        if_deleted,
+      </if>
+      <if test="deleteUser != null">
+        delete_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="categId != null">
+        #{categId,jdbcType=VARCHAR},
+      </if>
+      <if test="categName != null">
+        #{categName,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null">
+        #{level,jdbcType=CHAR},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=VARCHAR},
+      </if>
+      <if test="ifDeleted != null">
+        #{ifDeleted,jdbcType=BIT},
+      </if>
+      <if test="deleteUser != null">
+        #{deleteUser,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.sqc.bean.CategoryExample" resultType="java.lang.Long">
+    select count(*) from t_category
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update t_category
+    <set>
+      <if test="record.categId != null">
+        categ_id = #{record.categId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.categName != null">
+        categ_name = #{record.categName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.level != null">
+        level = #{record.level,jdbcType=CHAR},
+      </if>
+      <if test="record.parentId != null">
+        parent_id = #{record.parentId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ifDeleted != null">
+        if_deleted = #{record.ifDeleted,jdbcType=BIT},
+      </if>
+      <if test="record.deleteUser != null">
+        delete_user = #{record.deleteUser,jdbcType=CHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update t_category
+    set categ_id = #{record.categId,jdbcType=VARCHAR},
+      categ_name = #{record.categName,jdbcType=VARCHAR},
+      level = #{record.level,jdbcType=CHAR},
+      parent_id = #{record.parentId,jdbcType=VARCHAR},
+      if_deleted = #{record.ifDeleted,jdbcType=BIT},
+      delete_user = #{record.deleteUser,jdbcType=CHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sqc.bean.Category">
+    update t_category
+    <set>
+      <if test="categName != null">
+        categ_name = #{categName,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null">
+        level = #{level,jdbcType=CHAR},
+      </if>
+      <if test="parentId != null">
+        parent_id = #{parentId,jdbcType=VARCHAR},
+      </if>
+      <if test="ifDeleted != null">
+        if_deleted = #{ifDeleted,jdbcType=BIT},
+      </if>
+      <if test="deleteUser != null">
+        delete_user = #{deleteUser,jdbcType=CHAR},
+      </if>
+    </set>
+    where categ_id = #{categId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sqc.bean.Category">
+    update t_category
+    set categ_name = #{categName,jdbcType=VARCHAR},
+      level = #{level,jdbcType=CHAR},
+      parent_id = #{parentId,jdbcType=VARCHAR},
+      if_deleted = #{ifDeleted,jdbcType=BIT},
+      delete_user = #{deleteUser,jdbcType=CHAR}
+    where categ_id = #{categId,jdbcType=VARCHAR}
+  </update>
+</mapper>

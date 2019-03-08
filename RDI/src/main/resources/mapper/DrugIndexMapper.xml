@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sqc.dao.DrugIndexMapper">
+  <resultMap id="BaseResultMap" type="com.sqc.bean.DrugIndex">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="drug_id" jdbcType="CHAR" property="drugId" />
+    <result column="drug_index" jdbcType="REAL" property="drugIndex" />
+    <result column="avg_price" jdbcType="REAL" property="avgPrice" />
+    <result column="days" jdbcType="REAL" property="days" />
+    <result column="sales" jdbcType="REAL" property="sales" />
+    <result column="statis_date" jdbcType="DATE" property="statisDate" />
+  </resultMap>
+  <resultMap id="WithDrugResultMap" type="com.sqc.bean.DrugIndex">
+     <id column="id" jdbcType="BIGINT" property="id" />
+     <result column="drug_id" jdbcType="CHAR" property="drugId" />
+     <result column="drug_index" jdbcType="REAL" property="drugIndex" />
+     <result column="avg_price" jdbcType="REAL" property="avgPrice" />
+     <result column="days" jdbcType="REAL" property="days" />
+     <result column="sales" jdbcType="REAL" property="sales" />
+     <result column="statis_date" jdbcType="DATE" property="statisDate" />
+     <association property="drug" javaType="com.sqc.bean.Drug">
+    	<id column="did" property="drugId"/>
+    	<result column="drug_name" jdbcType="VARCHAR" property="drugName" />
+    	<result column="common_drug_name" jdbcType="VARCHAR" property="commonDrugName" />
+        <result column="dosage_form" jdbcType="VARCHAR" property="dosageForm" />
+        <result column="approval_number" jdbcType="VARCHAR" property="approvalNumber" />
+        <result column="manufacturer" jdbcType="VARCHAR" property="manufacturer" />
+        <result column="spec" jdbcType="VARCHAR" property="spec" />
+    </association>
+  </resultMap>  
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, drug_id, drug_index, avg_price, days, sales, statis_date
+  </sql>
+  <sql id="WithDrug_Column_List">
+  	i.id, i.drug_id,  i.drug_index, i.avg_price,i.days,i.sales, i.statis_date, 
+  	d.drug_id did,d.drug_name,d.common_drug_name,d.dosage_form,d.approval_number,d.manufacturer,
+  	CONCAT(d.specifications,d.spec_unit,'*',d.numbers,d.num_unit) AS spec
+  </sql>
+
+  
+  <!-- List<DrugIndex> selectByStatisDateWithDrugName(Map<String, Object> map); -->
+  <select id="selectByStatisDateWithDrugName" parameterType="map" resultMap="WithDrugResultMap">
+    select
+    <if test="distinct">
+    distinct
+    </if>
+    <include refid="WithDrug_Column_List" />
+     from t_drugindex i
+     LEFT JOIN t_drug d ON i.`drug_id`=d.`drug_id`
+     where Year(i.statis_date)=#{statisYear} and  Month(i.statis_date)=#{statisMonth}
+     <if test="drugName!=null"> and	
+			d.drug_name LIKE CONCAT('%',#{drugName},'%')
+	</if>
+     <if test="indexSort!=null" >
+			order by 
+	 </if>
+	 <if test="indexSort=='desc'">
+			i.drug_index DESC
+	 </if>
+	 <if test="indexSort=='asc'">
+			i.drug_index ASC
+	 </if>
+  </select>
+  
+  <!-- 查询某种药品最近一年的药品指数信息 List<Map<String, Object>> selectRecentIndicesById(String drugId); -->
+   <select id="selectRecentIndicesById" parameterType="java.lang.String" resultType="map">
+		select DATE_FORMAT(t.maxtime,"%Y-%m") maxtime,FORMAT(baselyindex, 3) as baselyindex,
+			FORMAT(monthlyindex, 3) as monthlyindex ,
+			FORMAT(yearlyindex, 3) as yearlyindex 
+		from(
+			select max(statis_date) as maxtime,baselyindex,monthlyindex,yearlyindex
+		    from v_drugindex 
+		    where drug_id=#{drugId}
+		    group by  statis_date ) t
+		where t.maxtime BETWEEN SUBDATE(CURDATE(),INTERVAL 12 month) AND CURDATE();
+	</select>
+   <!--以前的： 查询某种药品最近一年的药品指数信息 List<Map<String, Object>> selectRecentIndexsById(String drugId); 
+  <select id="selectRecentIndicesById" parameterType="java.lang.String" resultType="map">
+		select DATE_FORMAT(t.maxtime,"%Y-%m") maxtime,drug_index 
+		from(
+			select max(statis_date) as maxtime,drug_index
+		    from t_drugindex 
+		    where drug_id=#{drugId}
+		    group by DATE_FORMAT(statis_date,"%Y-%m")) t
+		where t.maxtime BETWEEN SUBDATE(CURDATE(),INTERVAL 12 month) AND CURDATE();
+	</select>
+	-->
+	<!--  带上药品信息的联合查询
+       List<DrugIndex> selectByExampleWithDrug(DrugIndexExample example);         -->
+   <select id="selectByExampleWithDrug" parameterType="com.sqc.bean.DrugIndexExample" resultMap="WithDrugResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="WithDrug_Column_List" />
+     from t_drugindex i
+     LEFT JOIN t_drug d ON i.`drug_id`=d.`drug_id`
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <!-- DrugIndex selectByPrimaryKeyWithDrug(Long id);   -->
+  <select id="selectByPrimaryKeyWithDrug" parameterType="java.lang.Long" resultMap="WithDrugResultMap">
+    select 
+    <include refid="WithDrug_Column_List" />
+    from t_drugindex i
+     LEFT JOIN t_drug  d ON i.`drug_id`=d.`drug_id`
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <!-- List<DrugIndex> selectByIdAndStatisDate(Map<String, Object> map); -->
+  <select id="selectByIdAndStatisDate" parameterType="map" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_drugindex
+     where drug_id = #{drugId}
+     and YEAR(statis_date)=#{year} AND MONTH(statis_date)=#{month}
+  </select>
+  
+  <select id="selectByExample" parameterType="com.sqc.bean.DrugIndexExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_drugindex
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_drugindex
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from t_drugindex
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.sqc.bean.DrugIndexExample">
+    delete from t_drugindex
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.sqc.bean.DrugIndex">
+    insert into t_drugindex (id, drug_id, drug_index, 
+      avg_price, days, sales, statis_date
+      )
+    values (#{id,jdbcType=BIGINT}, #{drugId,jdbcType=CHAR}, #{drugIndex,jdbcType=REAL}, 
+      #{avgPrice,jdbcType=REAL}, #{days,jdbcType=REAL}, #{sales,jdbcType=REAL}, #{statisDate,jdbcType=DATE}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sqc.bean.DrugIndex">
+    insert into t_drugindex
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="drugId != null">
+        drug_id,
+      </if>
+      <if test="drugIndex != null">
+        drug_index,
+      </if>
+      <if test="avgPrice != null">
+        avg_price,
+      </if>
+      <if test="days != null">
+        days,
+      </if>
+      <if test="sales != null">
+        sales,
+      </if>
+      <if test="statisDate != null">
+        statis_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="drugId != null">
+        #{drugId,jdbcType=CHAR},
+      </if>
+      <if test="drugIndex != null">
+        #{drugIndex,jdbcType=REAL},
+      </if>
+      <if test="avgPrice != null">
+        #{avgPrice,jdbcType=REAL},
+      </if>
+      <if test="days != null">
+        #{days,jdbcType=REAL},
+      </if>
+      <if test="sales != null">
+        #{sales,jdbcType=REAL},
+      </if>
+      <if test="statisDate != null">
+        #{statisDate,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.sqc.bean.DrugIndexExample" resultType="java.lang.Long">
+    select count(*) from t_drugindex
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update t_drugindex
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.drugId != null">
+        drug_id = #{record.drugId,jdbcType=CHAR},
+      </if>
+      <if test="record.drugIndex != null">
+        drug_index = #{record.drugIndex,jdbcType=REAL},
+      </if>
+      <if test="record.avgPrice != null">
+        avg_price = #{record.avgPrice,jdbcType=REAL},
+      </if>
+      <if test="record.days != null">
+        days = #{record.days,jdbcType=REAL},
+      </if>
+      <if test="record.sales != null">
+        sales = #{record.sales,jdbcType=REAL},
+      </if>
+      <if test="record.statisDate != null">
+        statis_date = #{record.statisDate,jdbcType=DATE},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update t_drugindex
+    set id = #{record.id,jdbcType=BIGINT},
+      drug_id = #{record.drugId,jdbcType=CHAR},
+      drug_index = #{record.drugIndex,jdbcType=REAL},
+      avg_price = #{record.avgPrice,jdbcType=REAL},
+      days = #{record.days,jdbcType=REAL},
+      sales = #{record.sales,jdbcType=REAL},
+      statis_date = #{record.statisDate,jdbcType=DATE}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sqc.bean.DrugIndex">
+    update t_drugindex
+    <set>
+      <if test="drugId != null">
+        drug_id = #{drugId,jdbcType=CHAR},
+      </if>
+      <if test="drugIndex != null">
+        drug_index = #{drugIndex,jdbcType=REAL},
+      </if>
+      <if test="avgPrice != null">
+        avg_price = #{avgPrice,jdbcType=REAL},
+      </if>
+      <if test="days != null">
+        days = #{days,jdbcType=REAL},
+      </if>
+      <if test="sales != null">
+        sales = #{sales,jdbcType=REAL},
+      </if>
+      <if test="statisDate != null">
+        statis_date = #{statisDate,jdbcType=DATE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sqc.bean.DrugIndex">
+    update t_drugindex
+    set drug_id = #{drugId,jdbcType=CHAR},
+      drug_index = #{drugIndex,jdbcType=REAL},
+      avg_price = #{avgPrice,jdbcType=REAL},
+      days = #{days,jdbcType=REAL},
+      sales = #{sales,jdbcType=REAL},
+      statis_date = #{statisDate,jdbcType=DATE}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

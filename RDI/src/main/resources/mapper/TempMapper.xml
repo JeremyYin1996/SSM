@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sqc.dao.TempMapper">
+  <resultMap id="BaseResultMap" type="com.sqc.bean.Temp">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="approval_number" jdbcType="VARCHAR" property="approvalNumber" />
+    <result column="sale_price" jdbcType="REAL" property="salePrice" />
+    <result column="sale_num" jdbcType="INTEGER" property="saleNum" />
+    <result column="statis_date" jdbcType="DATE" property="statisDate" />
+    <result column="pharm_id" jdbcType="CHAR" property="pharmId" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, approval_number, sale_price, sale_num, statis_date, pharm_id
+  </sql>
+  
+  
+  
+  <!--Integer selectMaxId(); -->
+  <select id="selectMaxId"  resultType="java.lang.Integer">
+    SELECT MAX(id) 
+    FROM temp
+  </select>
+  
+  
+  <select id="selectByExample" parameterType="com.sqc.bean.TempExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from temp
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from temp
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from temp
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.sqc.bean.TempExample">
+    delete from temp
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.sqc.bean.Temp">
+    insert into temp (id, approval_number, sale_price, 
+      sale_num, statis_date, pharm_id
+      )
+    values (#{id,jdbcType=BIGINT}, #{approvalNumber,jdbcType=VARCHAR}, #{salePrice,jdbcType=REAL}, 
+      #{saleNum,jdbcType=INTEGER}, #{statisDate,jdbcType=DATE}, #{pharmId,jdbcType=CHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sqc.bean.Temp">
+    insert into temp
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="approvalNumber != null">
+        approval_number,
+      </if>
+      <if test="salePrice != null">
+        sale_price,
+      </if>
+      <if test="saleNum != null">
+        sale_num,
+      </if>
+      <if test="statisDate != null">
+        statis_date,
+      </if>
+      <if test="pharmId != null">
+        pharm_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="approvalNumber != null">
+        #{approvalNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="salePrice != null">
+        #{salePrice,jdbcType=REAL},
+      </if>
+      <if test="saleNum != null">
+        #{saleNum,jdbcType=INTEGER},
+      </if>
+      <if test="statisDate != null">
+        #{statisDate,jdbcType=DATE},
+      </if>
+      <if test="pharmId != null">
+        #{pharmId,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.sqc.bean.TempExample" resultType="java.lang.Long">
+    select count(*) from temp
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update temp
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.approvalNumber != null">
+        approval_number = #{record.approvalNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.salePrice != null">
+        sale_price = #{record.salePrice,jdbcType=REAL},
+      </if>
+      <if test="record.saleNum != null">
+        sale_num = #{record.saleNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.statisDate != null">
+        statis_date = #{record.statisDate,jdbcType=DATE},
+      </if>
+      <if test="record.pharmId != null">
+        pharm_id = #{record.pharmId,jdbcType=CHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update temp
+    set id = #{record.id,jdbcType=BIGINT},
+      approval_number = #{record.approvalNumber,jdbcType=VARCHAR},
+      sale_price = #{record.salePrice,jdbcType=REAL},
+      sale_num = #{record.saleNum,jdbcType=INTEGER},
+      statis_date = #{record.statisDate,jdbcType=DATE},
+      pharm_id = #{record.pharmId,jdbcType=CHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sqc.bean.Temp">
+    update temp
+    <set>
+      <if test="approvalNumber != null">
+        approval_number = #{approvalNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="salePrice != null">
+        sale_price = #{salePrice,jdbcType=REAL},
+      </if>
+      <if test="saleNum != null">
+        sale_num = #{saleNum,jdbcType=INTEGER},
+      </if>
+      <if test="statisDate != null">
+        statis_date = #{statisDate,jdbcType=DATE},
+      </if>
+      <if test="pharmId != null">
+        pharm_id = #{pharmId,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sqc.bean.Temp">
+    update temp
+    set approval_number = #{approvalNumber,jdbcType=VARCHAR},
+      sale_price = #{salePrice,jdbcType=REAL},
+      sale_num = #{saleNum,jdbcType=INTEGER},
+      statis_date = #{statisDate,jdbcType=DATE},
+      pharm_id = #{pharmId,jdbcType=CHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <update id="alterAutoIncrement" parameterType="java.lang.Integer">  
+   alter table temp AUTO_INCREMENT = #{maxId}  
+</update>  
+  
+</mapper>
