@@ -1,9 +1,0 @@
-INDEX VERSION 1.126+E:\yunsi\.metadata\.plugins\org.eclipse.jdt.core
-1682733473.index
-2750716043.index
-746260076.index
-1188785453.index
-3498974549.index
-1222838767.index
-555883953.index
-212462054.index
